@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+
 from network.connection import test_switch_connection, apply_switch_configuration
 from network.config_builder import build_switch_config_commands
-from network.wr import save_switch_configuration
+from network.save_config import save_switch_configuration
+
 
 
 class CiscoAutomationGUI:
