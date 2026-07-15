@@ -1,8 +1,17 @@
 from netmiko import ConnectHandler
 from netmiko.exceptions import NetmikoTimeoutException, NetmikoAuthenticationException
 
+def apply_switch_configuration(connection_data, commands):
+    """
+    Aplica comandos de configuração no switch Cisco.
 
-def test_switch_connection(connection_data):
+    Args:
+        connection_data (dict): Dados de conexão com o switch.
+        commands (list): Lista de comandos de configuração.
+
+    Returns:
+        tuple: (status, message, output)
+    """
 
     device = {
         "device_type": connection_data["device_type"],
@@ -19,22 +28,17 @@ def test_switch_connection(connection_data):
         if connection_data.get("secret"):
             connection.enable()
 
-        prompt = connection.find_prompt()
-
-        output = connection.send_command("show version")
+        output = connection.send_config_set(commands)
 
         connection.disconnect()
 
-        if output:
-            return True, f"Conexão realizada com sucesso. Prompt atual: {prompt}"
-
-        return True, "Conexão realizada com sucesso."
+        return True, "Configuração aplicada com sucesso.", output
 
     except NetmikoAuthenticationException:
-        return False, "Erro de autenticação. Verifique usuário, senha ou secret enable."
+        return False, "Erro de autenticação. Verifique usuário, senha ou secret enable.", ""
 
     except NetmikoTimeoutException:
-        return False, "Erro de timeout. Verifique IP, porta SSH, conectividade ou se o SSH está habilitado no switch."
+        return False, "Erro de timeout. Verifique IP, porta SSH ou conectividade.", ""
 
     except Exception as error:
-        return False, f"Erro inesperado ao conectar no switch: {error}"
+        return False, f"Erro inesperado ao aplicar configuração: {error}", ""

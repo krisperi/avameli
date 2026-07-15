@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from network.connection import test_switch_connection
+from network.connection import test_switch_connection, apply_switch_configuration
+from network.config_builder import build_switch_config_commands
+from network.wr import save_switch_configuration
 
 
 class CiscoAutomationGUI:
@@ -445,41 +447,68 @@ class CiscoAutomationGUI:
             self._write_log(f"Falha na conexão: {result_message}")
             messagebox.showerror("Teste de Conexão", result_message)
 
+#
     def execute_automation(self):
         is_valid, message = self._validate_required_fields()
 
         if not is_valid:
             messagebox.showerror("Erro de validação", message)
             self._write_log(f"Erro: {message}")
-            return
+        return
 
         form_data = self._get_form_data()
         connection = form_data["connection"]
         config = form_data["configuration"]
 
         self._write_log("Iniciando fluxo de automação.")
-        self._write_log("Configuração desejada capturada pela interface.")
-        self._write_log("")
-        self._write_log("Dados de conexão:")
-        self._write_log(f"Switch: {connection['host']}")
-        self._write_log(f"Porta SSH: {connection['port']}")
-        self._write_log(f"Usuário: {connection['username']}")
-        self._write_log(f"Device Type: {connection['device_type']}")
-        self._write_log("")
-        self._write_log("Configuração desejada:")
-        self._write_log(f"Hostname desejado: {config['hostname']}")
+        self._write_log("Gerando comandos de configuração...")
 
-        for vlan in config["vlans"]:
-            self._write_log(f"VLAN {vlan['id']} - Nome: {vlan['name']}")
+        commands = build_switch_config_commands(config)
+
+        self._write_log("Comandos que serão aplicados:")
+
+        for command in commands:
+            self._write_log(f"  {command}")
 
         self._write_log("")
-        self._write_log("Nesta wave, a interface apenas captura e valida os dados.")
-        self._write_log("A aplicação da configuração será implementada nas próximas waves.")
+        self._write_log("Conectando ao switch para aplicar configuração...")
+
+        status, result_message, output = apply_switch_configuration(connection, commands)
+
+        if not status:
+            self._write_log(f"Falha ao aplicar configuração: {result_message}")
+            messagebox.showerror("Erro na Automação", result_message)
+        return
+
+        self._write_log(result_message)
+
+        if output:
+            self._write_log("Retorno do switch:")
+            self._write_log(output)
+
+        self._write_log("")
+        self._write_log("Salvando configuração na NVRAM...")
+
+        save_status, save_message, save_output = save_switch_configuration(connection)
+
+        if not save_status:
+            self._write_log(f"Falha ao salvar configuração: {save_message}")
+            messagebox.showerror("Erro ao Salvar", save_message)
+            return
+
+        self._write_log(save_message)
+
+        if save_output:
+            self._write_log("Retorno do comando de salvamento:")
+            self._write_log(save_output)
+
+        self._write_log("")
+        self._write_log("Automação concluída com sucesso.")
 
         messagebox.showinfo(
-            "Automação",
-            "Dados capturados com sucesso. A automação real será implementada nas próximas waves."
-        )
+            "Automação Concluída",
+            "Hostname e VLANs configurados com sucesso. Configuração salva na NVRAM."
+    )
 
     def run(self):
         self.root.mainloop()
