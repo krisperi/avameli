@@ -182,7 +182,7 @@ def _validate_required_fields(self):
 
     return True, "Campos validados com sucesso."
 
-     for field_name, field_value in required_fields.items():
+    for field_name, field_value in required_fields.items():
         if not field_value:
                 return False, f"O campo '{field_name}' é obrigatório."
 
