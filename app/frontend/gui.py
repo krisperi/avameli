@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from network.connection import test_switch_connection
 
 
 class CiscoAutomationGUI:
@@ -429,18 +430,20 @@ class CiscoAutomationGUI:
         form_data = self._get_form_data()
         connection = form_data["connection"]
 
-        self._write_log("Validação dos campos concluída.")
-        self._write_log("Dados de conexão recebidos.")
+        self._write_log("Iniciando teste de conexão com o switch...")
         self._write_log(f"Switch: {connection['host']}")
         self._write_log(f"Porta SSH: {connection['port']}")
         self._write_log(f"Usuário: {connection['username']}")
         self._write_log(f"Device Type: {connection['device_type']}")
-        self._write_log("Integração com Netmiko será implementada na próxima wave.")
 
-        messagebox.showinfo(
-            "Teste de Conexão",
-            "Campos validados com sucesso. A conexão real será implementada na próxima wave."
-        )
+        status, result_message = test_switch_connection(connection)
+
+        if status:
+            self._write_log(result_message)
+            messagebox.showinfo("Teste de Conexão", result_message)
+        else:
+            self._write_log(f"Falha na conexão: {result_message}")
+            messagebox.showerror("Teste de Conexão", result_message)
 
     def execute_automation(self):
         is_valid, message = self._validate_required_fields()
