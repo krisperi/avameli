@@ -3,8 +3,7 @@ from tkinter import ttk, messagebox
 
 from network.connection import test_switch_connection, apply_switch_configuration
 from network.config_builder import build_switch_config_commands
-from network.wr import save_switch_configuration
-
+from network.save_config import save_switch_configuration
 
 
 class CiscoAutomationGUI:
@@ -64,65 +63,40 @@ class CiscoAutomationGUI:
         connection_frame.pack(fill="x", pady=(0, 10))
 
         ttk.Label(connection_frame, text="Switch Host/IP:").grid(
-            row=0,
-            column=0,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=0, column=0, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
             textvariable=self.switch_host,
             width=35
         ).grid(
-            row=0,
-            column=1,
-            padx=5,
-            pady=5
+            row=0, column=1, padx=5, pady=5
         )
 
         ttk.Label(connection_frame, text="Porta SSH:").grid(
-            row=0,
-            column=2,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=0, column=2, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
             textvariable=self.switch_port,
             width=15
         ).grid(
-            row=0,
-            column=3,
-            padx=5,
-            pady=5
+            row=0, column=3, padx=5, pady=5
         )
 
         ttk.Label(connection_frame, text="Usuário:").grid(
-            row=1,
-            column=0,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=1, column=0, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
             textvariable=self.username,
             width=35
         ).grid(
-            row=1,
-            column=1,
-            padx=5,
-            pady=5
+            row=1, column=1, padx=5, pady=5
         )
 
         ttk.Label(connection_frame, text="Senha:").grid(
-            row=1,
-            column=2,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=1, column=2, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
@@ -130,18 +104,11 @@ class CiscoAutomationGUI:
             show="*",
             width=15
         ).grid(
-            row=1,
-            column=3,
-            padx=5,
-            pady=5
+            row=1, column=3, padx=5, pady=5
         )
 
         ttk.Label(connection_frame, text="Enable Secret:").grid(
-            row=2,
-            column=0,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=2, column=0, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
@@ -149,28 +116,18 @@ class CiscoAutomationGUI:
             show="*",
             width=35
         ).grid(
-            row=2,
-            column=1,
-            padx=5,
-            pady=5
+            row=2, column=1, padx=5, pady=5
         )
 
         ttk.Label(connection_frame, text="Device Type:").grid(
-            row=2,
-            column=2,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=2, column=2, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             connection_frame,
             textvariable=self.device_type,
             width=15
         ).grid(
-            row=2,
-            column=3,
-            padx=5,
-            pady=5
+            row=2, column=3, padx=5, pady=5
         )
 
     def _create_configuration_frame(self, parent):
@@ -182,22 +139,14 @@ class CiscoAutomationGUI:
         config_frame.pack(fill="x", pady=(0, 10))
 
         ttk.Label(config_frame, text="Hostname:").grid(
-            row=0,
-            column=0,
-            sticky="w",
-            padx=5,
-            pady=5
+            row=0, column=0, sticky="w", padx=5, pady=5
         )
         ttk.Entry(
             config_frame,
             textvariable=self.hostname,
             width=35
         ).grid(
-            row=0,
-            column=1,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=0, column=1, padx=5, pady=5, sticky="w"
         )
 
         ttk.Label(
@@ -205,11 +154,7 @@ class CiscoAutomationGUI:
             text="VLAN ID",
             font=("Arial", 10, "bold")
         ).grid(
-            row=1,
-            column=0,
-            sticky="w",
-            padx=5,
-            pady=(15, 5)
+            row=1, column=0, sticky="w", padx=5, pady=(15, 5)
         )
 
         ttk.Label(
@@ -217,11 +162,7 @@ class CiscoAutomationGUI:
             text="VLAN Name",
             font=("Arial", 10, "bold")
         ).grid(
-            row=1,
-            column=1,
-            sticky="w",
-            padx=5,
-            pady=(15, 5)
+            row=1, column=1, sticky="w", padx=5, pady=(15, 5)
         )
 
         ttk.Entry(
@@ -229,22 +170,14 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_1_id,
             width=15
         ).grid(
-            row=2,
-            column=0,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=2, column=0, padx=5, pady=5, sticky="w"
         )
         ttk.Entry(
             config_frame,
             textvariable=self.vlan_1_name,
             width=35
         ).grid(
-            row=2,
-            column=1,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=2, column=1, padx=5, pady=5, sticky="w"
         )
 
         ttk.Entry(
@@ -252,22 +185,14 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_2_id,
             width=15
         ).grid(
-            row=3,
-            column=0,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=3, column=0, padx=5, pady=5, sticky="w"
         )
         ttk.Entry(
             config_frame,
             textvariable=self.vlan_2_name,
             width=35
         ).grid(
-            row=3,
-            column=1,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=3, column=1, padx=5, pady=5, sticky="w"
         )
 
         ttk.Entry(
@@ -275,22 +200,14 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_3_id,
             width=15
         ).grid(
-            row=4,
-            column=0,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=4, column=0, padx=5, pady=5, sticky="w"
         )
         ttk.Entry(
             config_frame,
             textvariable=self.vlan_3_name,
             width=35
         ).grid(
-            row=4,
-            column=1,
-            padx=5,
-            pady=5,
-            sticky="w"
+            row=4, column=1, padx=5, pady=5, sticky="w"
         )
 
     def _create_buttons_frame(self, parent):
@@ -424,93 +341,113 @@ class CiscoAutomationGUI:
         }
 
     def test_connection(self):
-        is_valid, message = self._validate_required_fields()
+        try:
+            self._write_log("Botão Testar Conexão foi clicado.")
 
-        if not is_valid:
-            messagebox.showerror("Erro de validação", message)
-            self._write_log(f"Erro: {message}")
-            return
+            is_valid, message = self._validate_required_fields()
 
-        form_data = self._get_form_data()
-        connection = form_data["connection"]
+            if not is_valid:
+                messagebox.showerror("Erro de validação", message)
+                self._write_log(f"Erro: {message}")
+                return
 
-        self._write_log("Iniciando teste de conexão com o switch...")
-        self._write_log(f"Switch: {connection['host']}")
-        self._write_log(f"Porta SSH: {connection['port']}")
-        self._write_log(f"Usuário: {connection['username']}")
-        self._write_log(f"Device Type: {connection['device_type']}")
+            form_data = self._get_form_data()
+            connection = form_data["connection"]
 
-        status, result_message = test_switch_connection(connection)
+            self._write_log("Iniciando teste de conexão com o switch...")
+            self._write_log(f"Switch: {connection['host']}")
+            self._write_log(f"Porta SSH: {connection['port']}")
+            self._write_log(f"Usuário: {connection['username']}")
+            self._write_log(f"Device Type: {connection['device_type']}")
 
-        if status:
-            self._write_log(result_message)
-            messagebox.showinfo("Teste de Conexão", result_message)
-        else:
-            self._write_log(f"Falha na conexão: {result_message}")
-            messagebox.showerror("Teste de Conexão", result_message)
+            status, result_message = test_switch_connection(connection)
 
-#
+            if status:
+                self._write_log(result_message)
+                messagebox.showinfo("Teste de Conexão", result_message)
+            else:
+                self._write_log(f"Falha na conexão: {result_message}")
+                messagebox.showerror("Teste de Conexão", result_message)
+
+        except Exception as error:
+            error_message = f"Erro inesperado no teste de conexão: {error}"
+            self._write_log(error_message)
+            messagebox.showerror("Erro inesperado", error_message)
+
     def execute_automation(self):
-        is_valid, message = self._validate_required_fields()
+        try:
+            self._write_log("Botão Executar Automação foi clicado.")
 
-        if not is_valid:
-            messagebox.showerror("Erro de validação", message)
-            self._write_log(f"Erro: {message}")
-        return
+            is_valid, message = self._validate_required_fields()
 
-        form_data = self._get_form_data()
-        connection = form_data["connection"]
-        config = form_data["configuration"]
+            if not is_valid:
+                messagebox.showerror("Erro de validação", message)
+                self._write_log(f"Erro: {message}")
+                return
 
-        self._write_log("Iniciando fluxo de automação.")
-        self._write_log("Gerando comandos de configuração...")
+            form_data = self._get_form_data()
+            connection = form_data["connection"]
+            config = form_data["configuration"]
 
-        commands = build_switch_config_commands(config)
+            self._write_log("Iniciando fluxo de automação.")
+            self._write_log("Gerando comandos de configuração...")
 
-        self._write_log("Comandos que serão aplicados:")
+            commands = build_switch_config_commands(config)
 
-        for command in commands:
-            self._write_log(f"  {command}")
+            self._write_log("Comandos que serão aplicados:")
 
-        self._write_log("")
-        self._write_log("Conectando ao switch para aplicar configuração...")
+            for command in commands:
+                self._write_log(f"  {command}")
 
-        status, result_message, output = apply_switch_configuration(connection, commands)
+            self._write_log("")
+            self._write_log("Conectando ao switch para aplicar configuração...")
 
-        if not status:
-            self._write_log(f"Falha ao aplicar configuração: {result_message}")
-            messagebox.showerror("Erro na Automação", result_message)
-        return
+            status, result_message, output = apply_switch_configuration(
+                connection,
+                commands
+            )
 
-        self._write_log(result_message)
+            if not status:
+                self._write_log(f"Falha ao aplicar configuração: {result_message}")
+                messagebox.showerror("Erro na Automação", result_message)
+                return
 
-        if output:
-            self._write_log("Retorno do switch:")
-            self._write_log(output)
+            self._write_log(result_message)
 
-        self._write_log("")
-        self._write_log("Salvando configuração na NVRAM...")
+            if output:
+                self._write_log("Retorno do switch:")
+                self._write_log(output)
 
-        save_status, save_message, save_output = save_switch_configuration(connection)
+            self._write_log("")
+            self._write_log("Salvando configuração na NVRAM...")
 
-        if not save_status:
-            self._write_log(f"Falha ao salvar configuração: {save_message}")
-            messagebox.showerror("Erro ao Salvar", save_message)
-            return
+            save_status, save_message, save_output = save_switch_configuration(
+                connection
+            )
 
-        self._write_log(save_message)
+            if not save_status:
+                self._write_log(f"Falha ao salvar configuração: {save_message}")
+                messagebox.showerror("Erro ao Salvar", save_message)
+                return
 
-        if save_output:
-            self._write_log("Retorno do comando de salvamento:")
-            self._write_log(save_output)
+            self._write_log(save_message)
 
-        self._write_log("")
-        self._write_log("Automação concluída com sucesso.")
+            if save_output:
+                self._write_log("Retorno do comando de salvamento:")
+                self._write_log(save_output)
 
-        messagebox.showinfo(
-            "Automação Concluída",
-            "Hostname e VLANs configurados com sucesso. Configuração salva na NVRAM."
-    )
+            self._write_log("")
+            self._write_log("Automação concluída com sucesso.")
+
+            messagebox.showinfo(
+                "Automação Concluída",
+                "Hostname e VLANs configurados com sucesso. Configuração salva na NVRAM."
+            )
+
+        except Exception as error:
+            error_message = f"Erro inesperado na automação: {error}"
+            self._write_log(error_message)
+            messagebox.showerror("Erro inesperado", error_message)
 
     def run(self):
         self.root.mainloop()
