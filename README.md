@@ -3,7 +3,7 @@
 
 ## Objetivo
 
-Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a validar conhecimentos em **Automação de Redes (Network Automation)**. O desafio original em formato PDF e **não será disponibilizado neste repositório**, a fim de preservar a confidencialidade das informações. Essa avaliação tem por objetivo automatizar:
+Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a validar conhecimentos em **Automação de Redes (Network Automation)**. O desafio original em formato PDF **não será disponibilizado neste repositório**, a fim de preservar a confidencialidade das informações. Essa avaliação tem por objetivo automatizar:
 
 - Configuração de hostname
 - Configuração de VLANs
