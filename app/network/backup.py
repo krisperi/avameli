@@ -32,7 +32,7 @@ def backup_running_config(connection_data, hostname, backup_dir="backups"):
     }
 
     try:
-        os.makedirs(backup_dir, exist_ok=True)
+        os.makedirs(backups_dir, exist_ok=True)
 
         connection = ConnectHandler(**device)
 
