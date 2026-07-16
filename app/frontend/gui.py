@@ -12,7 +12,7 @@ class CiscoAutomationGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Automação de Switch Cisco")
-        self.root.geometry("900x720")
+        self.root.geometry("1080x960")
         self.root.resizable(False, False)
 
         self._create_variables()
