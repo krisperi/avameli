@@ -5,6 +5,7 @@ from network.connection import test_switch_connection, apply_switch_configuratio
 from network.config_builder import build_switch_config_commands
 from network.wr import save_switch_configuration
 from network.backup import backup_running_config
+from network.validate import validate_switch_configuration
 
 
 class CiscoAutomationGUI:
@@ -457,11 +458,33 @@ class CiscoAutomationGUI:
             self._write_log(f"Arquivo de backup: {backup_file_path}")
 
             self._write_log("")
+            self._write_log("Iniciando validação da configuração...")
+
+            validation_status, validation_message, validation_results = validate_switch_configuration(
+                connection,
+                config
+            )
+
+            self._write_log(validation_message)
+
+            for result in validation_results:
+                self._write_log(result)
+
+            self._write_log("")
+
+            if not validation_status:
+                self._write_log("Automação finalizada com alertas de validação.")
+                messagebox.showwarning(
+                    "Validação com Alertas",
+                    "A automação foi executada, mas foram encontradas divergências na validação. Verifique os logs."
+                )
+                return
+
             self._write_log("Automação concluída com sucesso.")
 
             messagebox.showinfo(
                 "Automação Concluída",
-                "Hostname e VLANs configurados, configuração salva na NVRAM e backup realizado com sucesso."
+                "Hostname e VLANs configurados, configuração salva, backup realizado e validação concluída com sucesso."
             )
 
         except Exception as error:
