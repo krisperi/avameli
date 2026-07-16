@@ -12,14 +12,14 @@ class CiscoAutomationGUI:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Automação de Switch Cisco")
-        self.root.geometry("850x700")
+        self.root.geometry("900x720")
         self.root.resizable(False, False)
 
         self._create_variables()
         self._create_widgets()
 
     def _create_variables(self):
-        # Variáveis de conexão
+        # Connection variables
         self.switch_host = tk.StringVar()
         self.switch_port = tk.StringVar(value="22")
         self.username = tk.StringVar()
@@ -27,10 +27,10 @@ class CiscoAutomationGUI:
         self.secret = tk.StringVar()
         self.device_type = tk.StringVar(value="cisco_ios")
 
-        # Variáveis de configuração
+        # Configuration variables
         self.hostname = tk.StringVar(value="SWITCH_AUTOMATIZADO")
 
-        # Variáveis das VLANs
+        # VLAN variables
         self.vlan_1_id = tk.StringVar(value="10")
         self.vlan_1_name = tk.StringVar(value="VLAN_DADOS")
 
@@ -65,71 +65,119 @@ class CiscoAutomationGUI:
         connection_frame.pack(fill="x", pady=(0, 10))
 
         ttk.Label(connection_frame, text="Switch Host/IP:").grid(
-            row=0, column=0, sticky="w", padx=5, pady=5
+            row=0,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.switch_host,
             width=35
         ).grid(
-            row=0, column=1, padx=5, pady=5
+            row=0,
+            column=1,
+            padx=5,
+            pady=5
         )
 
         ttk.Label(connection_frame, text="Porta SSH:").grid(
-            row=0, column=2, sticky="w", padx=5, pady=5
+            row=0,
+            column=2,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.switch_port,
             width=15
         ).grid(
-            row=0, column=3, padx=5, pady=5
+            row=0,
+            column=3,
+            padx=5,
+            pady=5
         )
 
         ttk.Label(connection_frame, text="Usuário:").grid(
-            row=1, column=0, sticky="w", padx=5, pady=5
+            row=1,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.username,
             width=35
         ).grid(
-            row=1, column=1, padx=5, pady=5
+            row=1,
+            column=1,
+            padx=5,
+            pady=5
         )
 
         ttk.Label(connection_frame, text="Senha:").grid(
-            row=1, column=2, sticky="w", padx=5, pady=5
+            row=1,
+            column=2,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.password,
             show="*",
             width=15
         ).grid(
-            row=1, column=3, padx=5, pady=5
+            row=1,
+            column=3,
+            padx=5,
+            pady=5
         )
 
         ttk.Label(connection_frame, text="Enable Secret:").grid(
-            row=2, column=0, sticky="w", padx=5, pady=5
+            row=2,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.secret,
             show="*",
             width=35
         ).grid(
-            row=2, column=1, padx=5, pady=5
+            row=2,
+            column=1,
+            padx=5,
+            pady=5
         )
 
         ttk.Label(connection_frame, text="Device Type:").grid(
-            row=2, column=2, sticky="w", padx=5, pady=5
+            row=2,
+            column=2,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             connection_frame,
             textvariable=self.device_type,
             width=15
         ).grid(
-            row=2, column=3, padx=5, pady=5
+            row=2,
+            column=3,
+            padx=5,
+            pady=5
         )
 
     def _create_configuration_frame(self, parent):
@@ -141,14 +189,23 @@ class CiscoAutomationGUI:
         config_frame.pack(fill="x", pady=(0, 10))
 
         ttk.Label(config_frame, text="Hostname:").grid(
-            row=0, column=0, sticky="w", padx=5, pady=5
+            row=0,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=5
         )
+
         ttk.Entry(
             config_frame,
             textvariable=self.hostname,
             width=35
         ).grid(
-            row=0, column=1, padx=5, pady=5, sticky="w"
+            row=0,
+            column=1,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Label(
@@ -156,7 +213,11 @@ class CiscoAutomationGUI:
             text="VLAN ID",
             font=("Arial", 10, "bold")
         ).grid(
-            row=1, column=0, sticky="w", padx=5, pady=(15, 5)
+            row=1,
+            column=0,
+            sticky="w",
+            padx=5,
+            pady=(15, 5)
         )
 
         ttk.Label(
@@ -164,7 +225,11 @@ class CiscoAutomationGUI:
             text="VLAN Name",
             font=("Arial", 10, "bold")
         ).grid(
-            row=1, column=1, sticky="w", padx=5, pady=(15, 5)
+            row=1,
+            column=1,
+            sticky="w",
+            padx=5,
+            pady=(15, 5)
         )
 
         ttk.Entry(
@@ -172,7 +237,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_1_id,
             width=15
         ).grid(
-            row=2, column=0, padx=5, pady=5, sticky="w"
+            row=2,
+            column=0,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Entry(
@@ -180,7 +249,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_1_name,
             width=35
         ).grid(
-            row=2, column=1, padx=5, pady=5, sticky="w"
+            row=2,
+            column=1,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Entry(
@@ -188,7 +261,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_2_id,
             width=15
         ).grid(
-            row=3, column=0, padx=5, pady=5, sticky="w"
+            row=3,
+            column=0,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Entry(
@@ -196,7 +273,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_2_name,
             width=35
         ).grid(
-            row=3, column=1, padx=5, pady=5, sticky="w"
+            row=3,
+            column=1,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Entry(
@@ -204,7 +285,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_3_id,
             width=15
         ).grid(
-            row=4, column=0, padx=5, pady=5, sticky="w"
+            row=4,
+            column=0,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
         ttk.Entry(
@@ -212,7 +297,11 @@ class CiscoAutomationGUI:
             textvariable=self.vlan_3_name,
             width=35
         ).grid(
-            row=4, column=1, padx=5, pady=5, sticky="w"
+            row=4,
+            column=1,
+            padx=5,
+            pady=5,
+            sticky="w"
         )
 
     def _create_buttons_frame(self, parent):
@@ -233,6 +322,13 @@ class CiscoAutomationGUI:
         )
         execute_button.pack(side="left", padx=5)
 
+        validate_button = ttk.Button(
+            buttons_frame,
+            text="Validar Config",
+            command=self.validate_config
+        )
+        validate_button.pack(side="left", padx=5)
+
         clear_button = ttk.Button(
             buttons_frame,
             text="Limpar Logs",
@@ -251,7 +347,7 @@ class CiscoAutomationGUI:
         self.logs_text = tk.Text(
             logs_frame,
             height=15,
-            width=95
+            width=100
         )
         self.logs_text.pack(side="left", fill="both", expand=True)
 
@@ -379,6 +475,62 @@ class CiscoAutomationGUI:
             self._write_log(error_message)
             messagebox.showerror("Erro inesperado", error_message)
 
+    def validate_config(self):
+        try:
+            self._write_log("Botão Validar Config foi clicado.")
+
+            is_valid, message = self._validate_required_fields()
+
+            if not is_valid:
+                messagebox.showerror("Erro de validação", message)
+                self._write_log(f"Erro: {message}")
+                return
+
+            form_data = self._get_form_data()
+            connection = form_data["connection"]
+            config = form_data["configuration"]
+
+            self._write_log("Iniciando validação manual da configuração...")
+            self._write_log(f"Hostname esperado: {config['hostname']}")
+
+            for vlan in config["vlans"]:
+                self._write_log(f"VLAN esperada: {vlan['id']} - {vlan['name']}")
+
+            self._write_log("")
+            self._write_log("Coletando configuração atual do switch...")
+
+            validation_status, validation_message, validation_results = validate_switch_configuration(
+                connection,
+                config
+            )
+
+            self._write_log(validation_message)
+
+            for result in validation_results:
+                self._write_log(result)
+
+            self._write_log("")
+
+            if not validation_status:
+                self._write_log("Validação manual finalizada com alertas.")
+                messagebox.showwarning(
+                    "Validação com Alertas",
+                    "Foram encontradas divergências na configuração. Verifique os logs."
+                )
+                return
+
+            self._write_log("Validação manual concluída com sucesso.")
+
+            messagebox.showinfo(
+                "Validação Concluída",
+                "A configuração atual do switch corresponde à configuração desejada."
+            )
+
+        except Exception as error:
+            error_message = f"Erro inesperado na validação manual: {error}"
+            self._write_log(error_message)
+            messagebox.showerror("Erro inesperado", error_message)
+
     def execute_automation(self):
         try:
             self._write_log("Botão Executar Automação foi clicado.")
@@ -458,7 +610,7 @@ class CiscoAutomationGUI:
             self._write_log(f"Arquivo de backup: {backup_file_path}")
 
             self._write_log("")
-            self._write_log("Iniciando validação da configuração...")
+            self._write_log("Iniciando validação automática da configuração...")
 
             validation_status, validation_message, validation_results = validate_switch_configuration(
                 connection,
