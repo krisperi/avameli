@@ -13,9 +13,6 @@ Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a
 - Versionamento 
 
 
-Esses sete dias foram uma experiência extremamente enriquecedora. Saí da minha zona de conforto como engenheiro de redes para desenvolver habilidades em automação, programação e versionamento de código. Foi um desafio intenso, mas que mostrou na prática que o futuro da engenharia de redes já faz parte do presente (e é onde quero estar, inclusive).
-
-
 ## Funcionalidades
 
 - Interface gráfica simples com Tkinter
@@ -71,7 +68,7 @@ Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar 
 
 ## Como usar
 
-### Executar
+### Executar automação
 
 Iniciar o arquivo **app/main.py** - Responsável por iniciar a interface gráfica Tkinter.
 
@@ -80,18 +77,18 @@ Iniciar o arquivo **app/main.py** - Responsável por iniciar a interface gráfic
 A aplicação possui os seguintes campos:
 
 - Conexão com o switch
-- Switch Host/IP: endereço IP ou hostname do switch
-- Porta SSH: porta SSH, normalmente 22
-- Usuário: usuário de acesso ao switch
-- Senha: senha do usuário
-- Enable Secret: senha de enable, se aplicável
-- Device Type: tipo do dispositivo no Netmiko, por padrão cisco_ios
+    - Switch Host/IP: endereço IP ou hostname do switch
+    - Porta SSH: porta SSH, normalmente 22
+    - Usuário: usuário de acesso ao switch
+    - Senha: senha do usuário
+    - Enable Secret: senha de enable, se aplicável
+    - Device Type: tipo do dispositivo no Netmiko, por padrão cisco_ios
 - Configuração desejada
-- Hostname: hostname desejado para o switch
-- VLAN ID: identificador da VLAN
-- VLAN Name: nome da VLAN
+    - Hostname: hostname desejado para o switch
+    - VLAN ID: identificador da VLAN
+    - VLAN Name: nome da VLAN
 
-#### Valores padrão utilizados:
+- Valores padrão utilizados:
 
 ```cisco 
 Hostname: SWITCH_AUTOMATIZADO
@@ -99,7 +96,6 @@ VLAN 10: VLAN_DADOS
 VLAN 20: VLAN_VOZ
 VLAN 50: VLAN_SEGURANCA
 ```
-**Observação:** Foi utilizado SEGURANCA ao invés de SEGURANÇA por conta do caractere especial.
 
 ### Botões
 
@@ -146,3 +142,28 @@ Ao executar a automação para executar as mudanças e verificar novamente, é e
 #### Limpar Logs
 Limpa a área de logs da interface gráfica.
 
+### Backup 
+
+Após a automação, a aplicação realiza backup da configuração atual do switch localmente na pasta backup/
+O nome do arquivo segue o padrão:
+```
+HOSTNAME_YYYYMMDD-HHMMSS.cfg
+```
+
+Exemplo:
+<img src="images/printbackup.png" width="100%">
+
+
+**Os arquivos de backup não são enviados para o Git, pois podem conter informações sensíveis da configuração do equipamento.**
+
+
+### Versionamento
+O projeto é gerenciado com Git. Durante o desenvolvimento, foram realizados commits descritivos para registrar a evolução do projeto.
+
+O projeto utiliza .gitignore para evitar o versionamento de arquivos temporários, sensíveis ou gerados automaticamente, como .env, venv/ ou __pycache__/.
+
+A pasta backup/ é mantida no repositório por meio de um arquivo .gitkeep, mas os arquivos reais de backup são ignorados.
+
+## Considerações finais
+
+Esses sete dias foram uma experiência extremamente enriquecedora. Saí da minha zona de conforto como engenheiro de redes para desenvolver habilidades em automação, programação e versionamento de código. Foi um desafio intenso, mas que mostrou na prática que o futuro da engenharia de redes já faz parte do presente (e é onde quero estar, inclusive).
