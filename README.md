@@ -60,11 +60,11 @@ Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar 
 
 **Comandos úteis:**
 
-    git status
-    git add .
-    git commit -m "A pretty little message"
-    git push
-    git pull
+    git status !Check do status do git
+    git add . !Se houver mudanças, prepara as alterações do seu projeto à área de staging
+    git commit -m "A pretty little message" ! Realiza as alterações localmente
+    git push !envia as alterações para a main
+    git pull !atualiza a copia do repositorio local feito por terceiros ou em caso de estar com outra máquina
 
 ## Como usar
 
