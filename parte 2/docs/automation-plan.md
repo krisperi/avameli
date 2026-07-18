@@ -8,14 +8,12 @@ O objetivo é definir os parâmetros necessários, ferramentas, passos lógicos 
 
 A automação proposta considera o uso de Python com entrada de dados em JSON e módulos específicos para cada fabricante, permitindo que a mesma estrutura de dados gere configurações compatíveis com FortiGate e Palo Alto.
 
-## 
-
 
 
 
 ## Cenário proposto
 
-O cenário proposto contempla uma VPN IPSec site-to-site entre dois sites:
+O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes:
 
 ![High Level Design](hld-topology.png)
 
@@ -50,8 +48,23 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois sites:
 
 - Nome lógico do túnel IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional e troubleshooting.
 ```
+---
 
-### Parametros da VPN
+### VPN e definição de parâmetros
+
+Uma VPN é necessária quando precisamos de uma comunicação segura entre ambientes que estão interligados por uma infraestrutura não confiável, como por exemplo, a internet. Evitando expor diretamente os serviços internos, a VPN cria um caminho protegido entre os ambientes, permitindo que tráfego sensível seja transportado com segurança.
+
+Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios **C.I.A** de segunça: **Confidencialidade, Integridade e Autenticação**, divido em 2 fases.
+
+- Confidencialidade é garantida pela criptografia, como AES, protegendo os dados contra leitura indevida.
+- Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego.
+- Autenticação é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados.
+
+1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade e grupo Diffie-Hellman.
+
+2. Na Phase 2, os peers negociam os parâmetros IPSec usados para proteger o tráfego real entre as redes, incluindo criptografia, integridade, PFS, lifetime e os seletores de tráfego ou Proxy IDs.
+
+Abaixo há os protocolos escolhidos de exemplo para nosso laboratório: 
 
 ### Phase 1 - IKE
 
@@ -61,7 +74,7 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois sites:
 | Autenticação | Pre-shared Key |
 | Criptografia | AES-256 |
 | Integridade | SHA-256 |
-| Diffie-Hellman Group | Group 19 |
+| Diffie-Hellman Group | Group 14 |
 | Lifetime | 28800 segundos |
 
 ### Phase 2 - IPSec
@@ -71,11 +84,58 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois sites:
 | Criptografia | AES-256 |
 | Integridade | SHA-256 |
 | PFS | Habilitado |
-| PFS Group | Group 19 |
+| PFS Group | Group 14 |
 | Lifetime | 3600 segundos |
 | Tráfego protegido | `10.1.1.0/24` <> `10.2.1.0/24` |
 
+### Compatibilidade
 
-### Rede de túnel
+Os parâmetros AES-256 e SHA-256 foram escolhidos por serem amplamente utilizados, seguros e compatíveis entre FortiGate e Palo Alto. O Diffie-Hellman Group 14 e o PFS Group 14 foram selecionados por oferecerem um bom equilíbrio entre segurança e compatibilidade.
+
+Grupos como 15 podem oferecer mais criptografia, porém podem gerar maior utilização de recursos em ambientes escalados e de hardware mais antigo/limitado. Já grupos como 19 ou 20, são modernos e eficientes, mas podem apresentar limitações de compatibilidade dependendo da versão do FortiOS ou PAN-OS.
+
+
+## Ferramentas e APIs
+
+A automação de configuração de VPN IPSec entre FortiGate e Palo Alto pode ser realizada por diferentes métodos a depender do ambiente, das regras de negócio, do nível de padronização desejado e das ferramentas já implementadas pela engenharia e arquitetura.
+
+### Palo Alto
+
+| Dispositivo | Ferramenta/API | Uso possível |
+|---|---|---|
+| Palo Alto | Palo Alto REST API | Criar objetos, interfaces, VPN, rotas e policies |
+| Palo Alto | Palo Alto XML API | Configuração, comandos operacionais e commit via API call |
+| Palo Alto | SSH/CLI Python com Netmiko | Enviar comandos `set`, executar commit e coletar validações |
+| Palo Alto | Panorama | Gerenciamento centralizado e GUI |
+
+
+### Fortinet
+
+| Dispositivo | Ferramenta/API | Uso possível |
+|---|---|---|
+| FortiGate | FortiGate REST API | Criar objetos, VPN IPSec, rotas, policies e consultar status via API calls |
+| FortiGate | SSH/CLI Python com Netmiko | Enviar comandos CLI e coletar validações |
+| FortiGate | FortiManager | Gerenciamento centralizado e GUI |
+
+
+Para esse exemplo, a abordagem escolhida será Python com entrada estruturada e Netmiko via SSH. Essa opção é simples para laboratório e permite demonstrar a lógica multi-vendor, chamando módulos diferentes conforme o fabricante identificado. 
+
+**OBS:** Para produção, APIs oficiais, FortiManager ou Panorama seriam opções mais robustas e confiáveis.
+
+
+
+## Considerações específicas entre FortiGate e Palo Alto
+
+Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes diferentes exige atenção nas diferenças de implementação, nomenclatura, sintaxe, comportamento operacional e métodos de validação. Mesmo quando os parâmetros criptográficos são compatíveis, cada plataforma possui formas próprias de configurar objetos, túneis, rotas, políticas e commits.
+
+
+| Pontos de divergência | Comentários |
+|---|---|
+| Sintaxe de configuração | Cada vendor possui sua própria "linguagem" para escrever linhas de configuração e comandos de validação. |
+| Aplicar configuração | No FortiGate, muitas alterações são aplicadas ao finalizar o bloco de configuração. No Palo Alto, as alterações ficam em candidate configuration e precisam de um `commit` para entrar em produção. |
+| Nomenclatura dos algoritmos | Os mesmos algoritmos podem ter nomes diferentes entre vendors. Por exemplo, AES-256, SHA-256 e DH Group 14 podem exigir formatos específicos em cada plataforma. |
+| Interface túnel | Em VPN route-based, cada vendor trata a interface de túnel de forma diferente. O FortiGate usa uma interface associada à Phase 1, enquanto o Palo Alto utiliza tunnel interfaces como tunnel.x. |
+| Políticas de firewall | Além da VPN, é necessário criar políticas permitindo o tráfego entre as redes protegidas. No FortiGate, as políticas são baseadas em interfaces. No Palo Alto, as políticas são baseadas em zonas. |
+| Commit e rollback | Palo Alto exige commit e possui candidate configuration. FortiGate tem comportamento diferente de aplicação. O plano de rollback deve considerar essas diferenças para evitar mudanças parciais ou inconsistentes. |
 
 
