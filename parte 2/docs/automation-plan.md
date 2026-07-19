@@ -31,23 +31,23 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes:
 
 ### Endereçamento
 
-| Endereço | Palo Alto | Fortigate |
+| **Endereço** | Palo Alto | Fortigate |
 |---|---:|---:|
-| IP WAN | `203.0.113.10` | `198.51.100.20` |
-| IP de gerenciamento | `10.32.160.1` | `10.32.160.2` |
-| Rede local | `10.1.1.0/24` | `10.2.1.0/24` |
-| Interface WAN | `TBD` | `TBD` |
-| Interface LAN/Trust | `TBD` | `TBD` |
-| Nome do túnel | `IPSEC-TU1` | `IPSEC-TU1` |
-
+| **IP WAN** | `203.0.113.10` | `198.51.100.20` |
+| **IP de gerenciamento** | `10.32.160.1` | `10.32.160.2` |
+| **Rede local** | `10.1.1.0/24` | `10.2.1.0/24` |
+| **Interface WAN** | `TBD` | `TBD` |
+| **Interface LAN/Trust** | `TBD` | `TBD` |
+| **Nome do túnel** | `IPSEC-TU1` | `IPSEC-TU1` |
 
 ```
-- Por se tratar de um ambiente de laboratório virtual não-produtivo, os IPs de WAN escolhidos são correspondentes a faixa TEST-NET da IANA usada para fins de documentação.
+Por se tratar de um ambiente de laboratório virtual não-produtivo, os IPs de WAN escolhidos são correspondentes a faixa TEST-NET da IANA usada para fins de documentação.
 
-- Os ranges de gerência e rede local são fictícios para teste do laboratório
+Os ranges de gerência e rede local são fictícios para teste do laboratório
 
-- Nome lógico do túnel IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional e troubleshooting.
+Nome lógico do túnel IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional em troubleshooting.
 ```
+
 ---
 
 ### VPN e definição de parâmetros
@@ -57,12 +57,12 @@ Uma VPN é necessária quando precisamos de uma comunicação segura entre ambie
 Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios **C.I.A** de segunça: **Confidencialidade, Integridade e Autenticação**, divido em 2 fases.
 
 - Confidencialidade é garantida pela criptografia, como AES, protegendo os dados contra leitura indevida.
-- Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego.
+- Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego. (No HASH do SHA, mesmo que apenas um caractere for mudado, todo o hash é alterado e identificado como não-íntegro facilmente).
 - Autenticação é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados.
 
 1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade e grupo Diffie-Hellman.
 
-2. Na Phase 2, os peers negociam os parâmetros IPSec usados para proteger o tráfego real entre as redes, incluindo criptografia, integridade, PFS, lifetime e os seletores de tráfego ou Proxy IDs.
+2. Na Phase 2, os peers negociam os parâmetros IPSec usados para proteger o tráfego real entre as redes, incluindo criptografia, integridade, PFS e lifetime
 
 Abaixo há os protocolos escolhidos de exemplo para nosso laboratório: 
 
@@ -196,4 +196,100 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Exibir o resultado no terminal.
 
 
+## Validação de Configuração e Alertas
 
+Após a aplicação da configuração da VPN IPSec, o script deverá executar validações nos dois firewalls para confirmar se a configuração foi aplicada corretamente e se o túnel está operacional.
+
+A estratégia de validação será dividida em duas camadas: Confirmar se os objetos, propostas, túneis, rotas e políticas foram criados conforme esperado. Segunda camadá irá validar se a VPN está estabelecida e se existe conectividade entre as extremidades do túnel.
+
+Caso alguma validação falhe, o script deverá exibir alertas claros no terminal, indicando o dispositivo, o item validado, o valor esperado e a divergência encontrada.
+
+---
+
+### Validações no FortiGate
+
+No FortiGate, a automação deverá validar se os componentes da VPN foram criados e se o túnel está operacional.
+
+| Item validado | Método de verificação | Resultado esperado |
+|---|---|---|
+| Phase 1 | `show vpn ipsec phase1-interface` | Phase 1 criada com peer, PSK, IKEv2, AES-256, SHA-256 e DH Group 14 |
+| Phase 2 | `show vpn ipsec phase2-interface` | Phase 2 criada com AES-256, SHA-256, PFS Group 14 e selectors corretos |
+| Status do túnel | `get vpn ipsec tunnel summary` | Túnel `IPSEC-TU1` listado e ativo |
+| Detalhes do túnel | `diagnose vpn tunnel list` | SAs estabelecidas para o peer configurado |
+| Rota estática | `get router info routing-table all` | Rota para a rede remota apontando para o túnel |
+| Políticas de firewall | `show firewall policy` | Policies permitindo tráfego entre LAN e VPN |
+| Conectividade tunnel IP | `execute ping 169.255.1.1` | Resposta do IP de túnel do Palo Alto |
+
+---
+
+### Validações no Palo Alto
+
+No Palo Alto, a automação deverá validar se os objetos, profiles, túnel, rotas, policies e commit foram aplicados corretamente.
+
+| Item validado | Método de verificação | Resultado esperado |
+|---|---|---|
+| Commit | Resultado do comando `commit` | Commit finalizado com sucesso |
+| IKE Gateway | `show config running` | IKE Gateway criado com peer correto |
+| IKE SA | `show vpn ike-sa` | IKE SA estabelecida |
+| IPSec Tunnel | `show config running` | IPSec Tunnel criado e associado ao IKE Gateway |
+| IPSec SA | `show vpn ipsec-sa` | IPSec SA estabelecida |
+| Tunnel interface | `show interface tunnel.1` | Interface de túnel ativa com IP correto |
+| Rota estática | `show routing route` | Rota para a rede remota apontando para a tunnel interface |
+| Security policies | `show config running` | Policies permitindo tráfego entre zonas envolvidas |
+| Conectividade tunnel IP | `ping source host 169.255.1.2` | Resposta do IP de túnel do Fortigate |
+
+---
+
+### Validação dos parâmetros esperados
+
+Além dos comandos operacionais, o script deverá comparar os parâmetros esperados no arquivo de entrada com os dados coletados nos firewalls.
+
+Exemplos de parâmetros a comparar:
+
+| Parâmetro | Valor esperado |
+|---|---|
+| Nome do túnel | `IPSEC-TU1` |
+| IKE Version | `IKEv2` |
+| Criptografia Phase 1 | `AES-256` |
+| Integridade Phase 1 | `SHA-256` |
+| DH Group | `Group 14` |
+| Criptografia Phase 2 | `AES-256` |
+| Integridade Phase 2 | `SHA-256` |
+| PFS Group | `Group 14` |
+| Rede local Palo Alto | `10.1.1.0/24` |
+| Rede local FortiGate | `10.2.1.0/24` |
+| Tunnel IP Palo Alto | `169.255.1.1/30` |
+| Tunnel IP FortiGate | `169.255.1.2/30` |
+
+Caso o valor encontrado seja diferente do valor esperado, o script deverá gerar um alerta de divergência.
+
+---
+
+### Estratégia de alertas
+
+Os alertas deverão ser exibidos diretamente no terminal, já que a automação proposta será executada em modo CLI. Cada alerta deverá ser claro o suficiente para orientar o engenheiro sobre o ponto de falha.
+
+| Condição | Alerta esperado |
+|---|---|
+| Falha de conexão com o firewall | Informar o dispositivo, IP de gerenciamento e possível problema de conectividade |
+| Falha de autenticação | Informar o dispositivo e solicitar validação das credenciais |
+| Vendor não suportado | Informar o vendor recebido e os vendors aceitos |
+| Campo obrigatório ausente | Informar o nome do campo ausente no arquivo de entrada |
+| Peer IP inacessível | Informar que a comunicação WAN entre os peers deve ser verificada mas ter opção de configurar mesmo assim |
+| Phase 1 não estabelecida | Informar peer, IKE version, autenticação, criptografia, integridade e DH Group a revisar |
+| Phase 2 não estabelecida | Informar selectors, PFS, criptografia, integridade e lifetime a revisar |
+| Rota ausente | Informar a rede remota sem rota via túnel |
+| Política de firewall ausente | Informar a direção do tráfego que não possui policy |
+| Commit Palo Alto falhou | Informar erro de commit e interromper validação operacional |
+| Ping para tunnel IP falhou | Informar possível problema de túnel, rota, policy ou Phase 2 |
+| Divergência de parâmetro | Exibir valor esperado e valor encontrado |
+
+---
+
+### Exemplo de scripts
+
+Na pasta `/vpn-config-examples` há o resultado dos comandos esperados para serem aplicados nos equipamentos Palo Alto e Fortigate.
+
+## Considerações finais
+
+Escreverei quando testar o laboratorio funcionando e tentar implementar tudo que escrevi
