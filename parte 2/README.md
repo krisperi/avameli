@@ -1,1 +1,1 @@
-Veremos
+## **As informações da parte 2 estão em docs/automation-plan.md**

@@ -8,7 +8,7 @@ O objetivo é definir os parâmetros necessários, ferramentas, passos lógicos 
 
 A automação proposta considera o uso de Python com entrada de dados em JSON e módulos específicos para cada fabricante, permitindo que a mesma estrutura de dados gere configurações compatíveis com FortiGate e Palo Alto.
 
-
+Para essa solução, a execução escolhida é via CLI por ser simples, direta e adequada para um ambiente de laboratório. Como o foco em planejamento e na lógica da automação, uma interface gráfica não é necessária. O modo CLI permitirá que o engenheiro acompanhe cada etapa da execução em tempo real.
 
 
 ## Cenário proposto
@@ -137,5 +137,63 @@ Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes 
 | Interface túnel | Em VPN route-based, cada vendor trata a interface de túnel de forma diferente. O FortiGate usa uma interface associada à Phase 1, enquanto o Palo Alto utiliza tunnel interfaces como tunnel.x. |
 | Políticas de firewall | Além da VPN, é necessário criar políticas permitindo o tráfego entre as redes protegidas. No FortiGate, as políticas são baseadas em interfaces. No Palo Alto, as políticas são baseadas em zonas. |
 | Commit e rollback | Palo Alto exige commit e possui candidate configuration. FortiGate tem comportamento diferente de aplicação. O plano de rollback deve considerar essas diferenças para evitar mudanças parciais ou inconsistentes. |
+
+
+## Fluxo de automação
+
+### Separação por vendor
+
+Para manter o código organizado, a automação deve separar as entradas informadas de acordo com o campo ***vendor***  para que os comandos aplicados sejam corretamente de acordo com o OS desejado.
+
+Após essa separação, há um módulo ***parameters.py*** que fará a padronização dos parâmetros criptográficos informados para que esteja de acordo também com o OS a ser configurado.
+
+### Fluxo lógico proposto
+
+1. **Ler o arquivo de entrada**
+   - Carregar os parâmetros da VPN a partir de um arquivo JSON.
+   - O arquivo deve conter informações como vendor, IP de gerenciamento, peer IP, rede local, rede de interface túnel, zonas e parâmetros de Phase 1 e Phase 2.
+
+2. **Validar os parâmetros obrigatórios**
+   - Verificar se os campos necessários foram preenchidos.
+   - Validar se os vendors informados são suportados.
+   - Validar se os parâmetros de Phase 1 e Phase 2 são compatíveis entre as duas extremidades.
+
+3. **Normalizar os parâmetros por vendor**
+   - Converter valores genéricos do arquivo de entrada para a sintaxe esperada por cada plataforma.
+
+4. **Executar pré-checks de conectividade**
+   - Testar conectividade com os IPs de gerenciamento.
+   - Conectar aos firewalls via SSH
+   - Testar ping para o endereço de WAN do peer
+
+5. **Gerar configuração para o FortiGate**
+   - Criar objetos de endereço para rede local e rede remota.
+   - Configurar Phase 1 com IKEv2, PSK, AES-256, SHA-256 e DH Group 14.
+   - Configurar Phase 2 com AES-256, SHA-256 e PFS Group 14.
+   - Criar ou associar a interface de túnel `IPSEC-TU1`.
+   - Configurar rota estática para a rede remota via túnel.
+   - Criar políticas de firewall permitindo tráfego entre LAN e VPN.
+
+6. **Gerar configuração para o Palo Alto**
+   - Criar address objects para rede local e rede remota.
+   - Criar IKE Crypto Profile com os parâmetros de Phase 1.
+   - Criar IPSec Crypto Profile com os parâmetros de Phase 2.
+   - Criar IKE Gateway apontando para o peer FortiGate.
+   - Criar tunnel interface com o IP definido para o Palo Alto.
+   - Criar IPSec Tunnel associado ao IKE Gateway e ao IPSec Crypto Profile.
+   - Configurar rota estática para a rede remota via tunnel interface.
+   - Criar security policies permitindo o tráfego entre as zonas envolvidas.
+   - Executar commit para aplicar a configuração.
+
+7. **Aplicar configuração nos firewalls**
+   - O script deverá identificar o vendor de cada equipamento e chamar o módulo correto (fortigate.py ou palo-alto.py).
+
+8. **Executar validação após automação**
+   - Verificar se a Phase 1 foi estabelecida de acordo com os comandos disponíveis de cada vendor
+   - Verificar se a Phase 2 foi estabelecida de acordo com os comandos disponíveis de cada vendor
+   - Ping para o IP do túnel vizinho
+   - Validar rotas, políticas de firewall e interfaces de túnel.
+   - Exibir o resultado no terminal.
+
 
 
