@@ -8,8 +8,7 @@ from vendors.paloalto import build_palo_alto_config, get_palo_alto_validation_co
 from vendors.fortios import build_fortigate_config, get_fortigate_validation_commands
 
 
-DEFAULT_CONFIG_PATH = "vpn.json"
-
+DEFAULT_CONFIG_PATH = "part2_vpn_ipsec/vpn_configs/fortigate_paloalto_ipsec_example.json"
 
 def validate_config(config):
     required_top_fields = ["vpn_name", "phase1", "phase2", "devices"]
@@ -18,8 +17,11 @@ def validate_config(config):
         if field not in config:
             return False, f"Campo obrigatório ausente: {field}"
 
-    if not isinstance(config["devices"], list) or len(config["devices"]) < 2:
-        return False, "O JSON deve conter pelo menos dois dispositivos."
+    if not isinstance(config["devices"], list):
+        return False, "O campo devices deve ser uma lista."
+
+    if len(config["devices"]) < 1:
+        return False, "O JSON deve conter pelo menos um dispositivo."
 
     for device in config["devices"]:
         required_device_fields = [
