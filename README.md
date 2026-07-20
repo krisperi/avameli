@@ -58,13 +58,16 @@ Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar 
 <img src="images/githubtutorial2.png" width="80%">
 
 
-**Comandos úteis:**
+**Principais comandos:**
 
-    git status !Check do status do git
-    git add . !Se houver mudanças, prepara as alterações do seu projeto à área de staging
-    git commit -m "A pretty little message" ! Realiza as alterações localmente
-    git push !envia as alterações para a main
-    git pull !atualiza a copia do repositorio local feito por terceiros ou em caso de estar com outra máquina
+| Comando | Comentário |
+|-|-|
+| `git status` | Verifica alterações locais |
+| `git add .` | Adiciona arquivos ao staging |
+| `git commit -m "A pretty little message"` |  Cria um commit comentado |
+| `git push`  | envia as alterações para a main |
+| `git pull` | Atualiza o repositório local |
+
 
 ## Como usar
 
@@ -72,7 +75,7 @@ Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar 
 
 Iniciar o arquivo **app/main.py** - Responsável por iniciar a interface gráfica Tkinter.
 
-<img src="images/start.png" width="100%">
+<img src="images/start.png" width="95%">
 
 A aplicação possui os seguintes campos:
 
@@ -102,7 +105,7 @@ VLAN 50: VLAN_SEGURANCA
 #### **Testar Conexão**
 Valida os campos obrigatórios e realiza um teste de conexão SSH com o switch. O teste utiliza Netmiko para conectar ao equipamento e executar um comando simples de verificação.
 
-<img src="images/testeconexao.png" width="100%">
+<img src="images/testeconexao.png" width="95%">
 
 #### **Executar Automação**
 
@@ -118,11 +121,11 @@ Executa o fluxo completo de automação:
 8. Exibe o resultado na interface
 
 Antes
-<img src="images/preautomation.png" width="100%">
+<img src="images/preautomation.png" width="95%">
 Execução do job
-<img src="images/automation.png" width="100%">
+<img src="images/automation.png" width="95%">
 Após
-<img src="images/posautomation.png" width="100%">
+<img src="images/posautomation.png" width="95%">
 
 
 #### **Validar Config**
@@ -130,14 +133,14 @@ Executa apenas a validação da configuração atual do switch. Este botão é �
 
 **Exemplo de uso:** Configure o switch usando o botão Executar Automação, altere na interface o nome esperado de uma VLAN e clique em Validar Config. A aplicação exibirá alerta informando a divergência encontrada
 
-<img src="images/validationconfignotok.png" width="100%">
-<img src="images/notok2.png" width="100%">
-<img src="images/notok1.png" width="100%">
-<img src="images/notok3.png" width="100%">
+<img src="images/validationconfignotok.png" width="95%">
+<img src="images/notok2.png" width="95%">
+<img src="images/notok1.png" width="95%">
+<img src="images/notok3.png" width="95%">
 
 Ao executar a automação para executar as mudanças e verificar novamente, é esperado:
 
-<img src="images/validation ok.png" width="100%">
+<img src="images/validation ok.png" width="95%">
 
 #### Limpar Logs
 Limpa a área de logs da interface gráfica.
@@ -151,14 +154,14 @@ HOSTNAME_YYYYMMDD-HHMMSS.cfg
 ```
 
 Exemplo:
-<img src="images/printbackup.png" width="100%">
+<img src="images/printbackup.png" width="95%">
 
 
 **Os arquivos de backup não são enviados para o Git, pois podem conter informações sensíveis da configuração do equipamento.**
 
 
 ### Versionamento
-O projeto é gerenciado com Git. Durante o desenvolvimento, foram realizados commits descritivos para registrar a evolução do projeto.
+O projeto foi versionado com Git. Durante o desenvolvimento, foram realizados commits descritivos para registrar a evolução do projeto.
 
 O projeto utiliza .gitignore para evitar o versionamento de arquivos temporários, sensíveis ou gerados automaticamente, como .env, venv/ ou __pycache__/.
 
@@ -166,4 +169,4 @@ A pasta backup/ é mantida no repositório por meio de um arquivo .gitkeep, mas 
 
 ## Considerações finais
 
-Saí da minha zona de conforto como engenheiro de redes para desenvolver habilidades em automação, programação e versionamento de código. Foi um desafio intenso, mas que mostrou na prática que o futuro da engenharia de redes já faz parte do presente e é onde quero estar, inclusive.
+Esse projeto foi uma oportunidade incrível para ir além da engenharia de redes tradicional. No desenvolvimento, me desenvolvi em automação, programação em Python, criação de interfaces, controle de versão com Git e documentação técnica. Foi uma experiência super enriquecedora e que só me provou o quanto a automação já virou competência essencial no dia a dia da nossa área.

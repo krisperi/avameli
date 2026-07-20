@@ -47,6 +47,8 @@ Nome de identificação dos túneis IPSec foi o mesmo utilizado em ambos os fire
 
 Uma VPN é necessária quando precisamos de uma comunicação segura entre ambientes que estão interligados por uma infraestrutura não confiável, como por exemplo, a internet. Evitando expor diretamente os serviços internos, a VPN cria um caminho protegido entre os ambientes, permitindo que tráfego sensível seja transportado com segurança.
 
+Foi selecionado uma VPN route-based, porque é uma abordagem moderna, é suportada tanto pelo Fortigate quanto pelo Palo Alto e facilita muito a automação.
+
 Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios **C.I.A** de segunça: **Confidencialidade, Integridade e Autenticação**, divido em 2 fases.
 
 - Confidencialidade é garantida pela criptografia, como AES, protegendo os dados contra leitura indevida.
@@ -165,7 +167,6 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
 4. **Executar pré-checks de conectividade**
    - Testar conectividade com os IPs de gerenciamento.
    - Conectar aos firewalls via SSH
-   - Testar ping para o endereço de WAN do peer
 
 5. **Gerar configuração para o FortiGate**
    - Criar objetos de endereço para rede local e rede remota.
@@ -196,7 +197,7 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Validar rotas, políticas de firewall e interfaces de túnel.
    - Exibir o resultado no terminal.
 
-Exemplos de configuração para [Palo Alto](vpn-config-examples/paloalto.cfg) e [Fortigate](vpn-config-examples/fortigate.cfg)
+Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [Fortigate](/parte%202/vpn-config-examples/fortigate.cfg)
 
 
 ## Validação de Configuração e Alertas
