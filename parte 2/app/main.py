@@ -4,8 +4,8 @@ from loader import load_json_config
 from vendors import is_supported_vendor, get_supported_vendors_message
 from parametros import map_parameters
 from conn import apply_commands, mask_sensitive_commands, run_validation_commands
-from vendors.paloalto import build_palo_alto_config, get_palo_alto_validation_commands
-from vendors.fortios import build_fortigate_config, get_fortigate_validation_commands
+from pyvendors.paloalto import build_palo_alto_config, get_palo_alto_validation_commands
+from pyvendors.fortios import build_fortigate_config, get_fortigate_validation_commands
 
 
 DEFAULT_CONFIG_PATH = "vpn.json"
