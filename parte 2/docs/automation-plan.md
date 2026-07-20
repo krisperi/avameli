@@ -31,14 +31,14 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (P
 | **Rede local** | `10.1.1.0/24` | `10.2.1.0/24` |
 | **Interface WAN** | `TBD` | `TBD` |
 | **Interface LAN/Trust** | `TBD` | `TBD` |
-| **Nome do túnel** | `IPSEC-TU1` | `IPSEC-TU1` |
+| **Identificação dos tuneis** | `IPSEC-TU1` | `IPSEC-TU1` |
 
 ```
 Por se tratar de um ambiente de laboratório virtual não-produtivo, os IPs de WAN escolhidos são correspondentes a faixa TEST-NET da IANA usada para fins de documentação.
 
 Os ranges de gerência e rede local são fictícios para teste do laboratório
 
-Nome lógico do túnel IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional em troubleshooting.
+Nome de identificação dos túneis IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional em troubleshooting.
 ```
 
 ---
