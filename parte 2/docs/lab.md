@@ -3,6 +3,8 @@
 
 Para a execução deste laboratório, foi necessário uma aquisição de um plano EVE-NG Cloud, já que rodar as máquinas virtuais do FortiGate, Palo Alto e Ubuntu simultaneamente ultrapassava os limites de hardware da minha máquina. Apesar disso, consegui emular o ambiente o cenário proposto, aproximando a topologia ao máximo de um cenário real.
 
+O código dessa automação se encontra em [app](/app/)
+
 ![High Level Design](lab1.png)
 
 No desenvolvimento da automação, optei por implementar uma interface em linha de comando (CLI). Considerei que o tempo seria mais bem aproveitado focando na documentação, no planejamento e nos testes — etapas que, a meu ver, são as mais críticas desta avaliação.

@@ -15,7 +15,7 @@ Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a
 
 ## Funcionalidades
 
-- Interface gráfica simples com Tkinter
+- Interface gráfica simples com Tkinter  - Motivo: Já vem instalado com python, executa localmente e menos complexo de aprender
 - Teste de conexão SSH com o equipamento
 - Configuração de hostname
 - VLAN ID e VLAN Name inserido pelo usuário
@@ -166,4 +166,4 @@ A pasta backup/ é mantida no repositório por meio de um arquivo .gitkeep, mas 
 
 ## Considerações finais
 
-Esses sete dias foram uma experiência extremamente enriquecedora. Saí da minha zona de conforto como engenheiro de redes para desenvolver habilidades em automação, programação e versionamento de código. Foi um desafio intenso, mas que mostrou na prática que o futuro da engenharia de redes já faz parte do presente (e é onde quero estar, inclusive).
+Saí da minha zona de conforto como engenheiro de redes para desenvolver habilidades em automação, programação e versionamento de código. Foi um desafio intenso, mas que mostrou na prática que o futuro da engenharia de redes já faz parte do presente e é onde quero estar, inclusive.
