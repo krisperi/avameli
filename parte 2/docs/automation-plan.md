@@ -8,14 +8,13 @@ O objetivo é definir os parâmetros necessários, ferramentas, passos lógicos 
 
 A automação proposta considera o uso de Python com entrada de dados em JSON e módulos específicos para cada fabricante, permitindo que a mesma estrutura de dados gere configurações compatíveis com FortiGate e Palo Alto.
 
+---
 
 ## Cenário proposto
 
-O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (Poderá haver divergência de configuração executada no lab com objetivo de facilitar a implementação ):
+O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (Poderá haver divergência de configuração executada no lab com objetivo de facilitar a implementação):
 
-![High Level Design](hld-topology.png)
-
-
+<img src="hld-topology.png" width="95%">
 
 ### Informações gerais
 | **Item** | **Site A** | **Site B** |
@@ -33,13 +32,11 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (P
 | **Interface LAN/Trust** | `TBD` | `TBD` |
 | **Identificação dos tuneis** | `IPSEC-TU1` | `IPSEC-TU1` |
 
-```
 Por se tratar de um ambiente de laboratório virtual não-produtivo, os IPs de WAN escolhidos são correspondentes a faixa TEST-NET da IANA usada para fins de documentação.
 
 Os ranges de gerência e rede local são fictícios para teste do laboratório
 
 Nome de identificação dos túneis IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional em troubleshooting.
-```
 
 ---
 
@@ -96,10 +93,12 @@ Grupos como 15 podem oferecer mais resistência criptográfica, porém podem ger
 
 Os timers padrão de lifetime são diferentes em ambos os vendors, mas estará configurado para 28800 segundos e 3600 segundos, valores comumente usados no mercado.
 
+---
 
 ## Ferramentas e APIs
 
 A automação de configuração de VPN IPSec entre FortiGate e Palo Alto pode ser realizada por diferentes métodos a depender do ambiente, das regras de negócio, do nível de padronização desejado e das ferramentas já implementadas pela engenharia e arquitetura.
+
 
 ### Palo Alto
 
@@ -120,11 +119,9 @@ A automação de configuração de VPN IPSec entre FortiGate e Palo Alto pode se
 | FortiGate | FortiManager | Gerenciamento centralizado e GUI |
 
 
-Para esse exemplo, a abordagem escolhida será Python com entrada estruturada e Netmiko via SSH. Essa opção é simples para laboratório e permite demonstrar a lógica multi-vendor, chamando módulos diferentes conforme o fabricante identificado. 
+Para esse exemplo, a abordagem escolhida será Python com entrada estruturada e Netmiko via SSH. Essa opção é simples para laboratório e permite demonstrar a lógica multi-vendor, chamando módulos diferentes conforme o fabricante identificado.
 
-**OBS:** Para produção, APIs oficiais, FortiManager ou Panorama seriam opções mais robustas e confiáveis.
-
-
+---
 
 ## Considerações específicas entre FortiGate e Palo Alto
 
@@ -144,11 +141,21 @@ Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes 
 
 ## Fluxo de automação
 
+### Arquitetura
+
+A proposta da segunda etapa do projeto foi desenvolvida utilizando uma arquitetura modular, buscando separar responsabilidades e facilitar a manutenção, reutilização e expansão da solução.
+
+Em vez de desenvolver um único script contendo toda a lógica de configuração, a solução foi dividida em módulos independentes, permitindo que novos fabricantes e funcionalidades possam ser adicionados sem necessidade de reescrever toda a aplicação.
+
+---
+
 ### Separação por vendor
 
 Para manter o código organizado, a automação deve separar as entradas informadas de acordo com o campo ***vendor***  para que os comandos aplicados sejam corretamente de acordo com o OS desejado.
 
 Após essa separação, há um módulo ***parameters.py*** que fará a padronização dos parâmetros criptográficos informados para que esteja de acordo também com o OS a ser configurado.
+
+---
 
 ### Fluxo lógico proposto
 
@@ -199,6 +206,7 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
 
 Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [Fortigate](/parte%202/vpn-config-examples/fortigate.cfg)
 
+---
 
 ## Validação de Configuração e Alertas
 
@@ -289,7 +297,7 @@ Os alertas deverão ser exibidos diretamente no terminal, já que a automação 
 
 ---
 
-## Pontos de melhoria
+## Pontos de melhoria contínua
 
 Todo projeto de automação deve considerar a melhoria contínua como parte fundamental do seu ciclo de evolução. Sempre existirão oportunidades de aprimoramento que podem aumentar a confiabilidade, escalabilidade e rastreabilidade do processo. Para este projeto, foram considerados os seguintes pontos de melhoria:
 
