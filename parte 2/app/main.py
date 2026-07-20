@@ -8,7 +8,7 @@ from vendors.paloalto import build_palo_alto_config, get_palo_alto_validation_co
 from vendors.fortios import build_fortigate_config, get_fortigate_validation_commands
 
 
-DEFAULT_CONFIG_PATH = "part2_vpn_ipsec/vpn_configs/fortigate_paloalto_ipsec_example.json"
+DEFAULT_CONFIG_PATH = "vpn.json"
 
 def validate_config(config):
     required_top_fields = ["vpn_name", "phase1", "phase2", "devices"]
