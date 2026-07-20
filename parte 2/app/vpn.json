@@ -1,0 +1,52 @@
+{
+  "vpn_name": "IPSEC-TU1",
+
+  "phase1": {
+    "ike_version": "ikev2",
+    "authentication": "pre_shared_key",
+    "encryption": "aes256",
+    "integrity": "sha256",
+    "dh_group": "group14",
+    "lifetime": 28800
+  },
+
+  "phase2": {
+    "encryption": "aes256",
+    "integrity": "sha256",
+    "pfs": true,
+    "pfs_group": "group14",
+    "lifetime": 3600
+  },
+
+  "devices": [
+    {
+      "name": "PALO-ALTO-SITE-A",
+      "vendor": "palo_alto",
+      "netmiko_device_type": "paloalto_panos",
+      "management_ip": "10.32.160.2",
+      "wan_ip": "203.0.113.10",
+      "peer_wan_ip": "198.51.100.20",
+      "local_subnet": "10.1.1.0/24",
+      "remote_subnet": "10.2.1.0/24",
+      "tunnel_interface": "tunnel.1",
+      "tunnel_ip": "169.255.1.1/30",
+      "virtual_router": "default",
+      "local_zone": "trust",
+      "vpn_zone": "vpn"
+    },
+    {
+      "name": "FORTIGATE-SITE-B",
+      "vendor": "fortigate",
+      "netmiko_device_type": "fortinet",
+      "management_ip": "10.32.160.1",
+      "wan_ip": "198.51.100.20",
+      "peer_wan_ip": "203.0.113.10",
+      "local_subnet": "10.2.1.0/24",
+      "remote_subnet": "10.1.1.0/24",
+      "wan_interface": "port1",
+      "lan_interface": "port2",
+      "tunnel_name": "IPSEC-TU1",
+      "tunnel_ip": "169.255.1.2/30"
+    }
+  ]
+}
