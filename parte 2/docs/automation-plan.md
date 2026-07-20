@@ -8,12 +8,10 @@ O objetivo é definir os parâmetros necessários, ferramentas, passos lógicos 
 
 A automação proposta considera o uso de Python com entrada de dados em JSON e módulos específicos para cada fabricante, permitindo que a mesma estrutura de dados gere configurações compatíveis com FortiGate e Palo Alto.
 
-Para essa solução, a execução escolhida é via CLI por ser simples, direta e adequada para um ambiente de laboratório. Como o foco em planejamento e na lógica da automação, uma interface gráfica não é necessária. O modo CLI permitirá que o engenheiro acompanhe cada etapa da execução em tempo real.
-
 
 ## Cenário proposto
 
-O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes:
+O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (Poderá haver divergência de configuração executada no lab com objetivo de facilitar a implementação ):
 
 ![High Level Design](hld-topology.png)
 
@@ -27,8 +25,8 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes:
 | **Tipo de VPN** | IPSec Site-to-site | IPSec Site-to-site |
 | **Autenticação** | Pre-shared key | Pre-shared key |
 | **IKE Version** | IKEv2 | IKEv2 |
-|---|---|---|
-| **IP WAN** | `203.0.113.10` | `198.51.100.20` |
+|**IP Tunel**|`169.255.1.1/30`|`169.255.1.2/30`|
+| **IP WAN** | `203.0.113.10/30` | `198.51.100.20` |
 | **IP de gerenciamento** | `10.32.160.1` | `10.32.160.2` |
 | **Rede local** | `10.1.1.0/24` | `10.2.1.0/24` |
 | **Interface WAN** | `TBD` | `TBD` |
@@ -52,7 +50,7 @@ Uma VPN é necessária quando precisamos de uma comunicação segura entre ambie
 Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios **C.I.A** de segunça: **Confidencialidade, Integridade e Autenticação**, divido em 2 fases.
 
 - Confidencialidade é garantida pela criptografia, como AES, protegendo os dados contra leitura indevida.
-- Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego. (No HASH do SHA, mesmo que apenas um caractere for mudado, todo o hash é alterado e identificado como não-íntegro facilmente).
+- Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego. (O HASH identifica alterações no pacote em caso de mudança de um caractere sequer).
 - Autenticação é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados.
 
 1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade, grupo Diffie-Hellman e timers.
@@ -83,11 +81,22 @@ Abaixo há os protocolos escolhidos de exemplo para nosso laboratório:
 | Lifetime | 3600 segundos |
 | Tráfego protegido | `10.1.1.0/24` <> `10.2.1.0/24` |
 
+### PSK
+
+Em ambiente produtivo recomenda-se:
+
+- Vault
+- CyberArk
+- Hashicorp Vault
+- Variáveis de ambiente
+- Contas dedicadas de automação
+- RBAC
+
 ### Compatibilidade
 
 Os parâmetros AES-256 e SHA-256 foram escolhidos por serem amplamente utilizados, seguros e compatíveis entre FortiGate e Palo Alto. O Diffie-Hellman Group 14 e o PFS Group 14 foram selecionados por oferecerem um bom equilíbrio entre segurança e compatibilidade.
 
-Grupos como 15 podem oferecer mais criptografia, porém podem gerar maior utilização de recursos em ambientes escalados e de hardware mais antigo/limitado. Já grupos como 19 ou 20, são modernos e eficientes, mas podem apresentar limitações de compatibilidade dependendo da versão do FortiOS ou PAN-OS.
+Grupos como 15 podem oferecer mais resistência criptográfica, porém podem gerar maior utilização de recursos em ambientes escalados e de hardware mais antigo/limitado. Já grupos como 19 ou 20, são modernos e eficientes, mas podem apresentar limitações de compatibilidade dependendo da versão do FortiOS ou PAN-OS.
 
 Os timers padrão de lifetime são diferentes em ambos os vendors, mas estará configurado para 28800 segundos e 3600 segundos, valores comumente usados no mercado.
 
@@ -123,7 +132,7 @@ Para esse exemplo, a abordagem escolhida será Python com entrada estruturada e 
 
 ## Considerações específicas entre FortiGate e Palo Alto
 
-Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes diferentes exige atenção nas diferenças de implementação, nomenclatura, sintaxe, comportamento operacional e métodos de validação. Mesmo quando os parâmetros criptográficos são compatíveis, cada plataforma possui formas próprias de configurar objetos, túneis, rotas, políticas e commits.
+Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes diferentes exige atenção nas diferenças de implementação, nomenclatura, sintaxe, comportamento operacional e métodos de validação. Existem algumas diferenças importantes de sintaxe, conceitos e comportamento. O objetivo é o mesmo (criar uma VPN IPsec route-based), mas cada fabricante organiza os objetos de forma diferente.
 
 
 | Pontos de divergência | Comentários |
@@ -134,6 +143,7 @@ Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes 
 | Interface túnel | Em VPN route-based, cada vendor trata a interface de túnel de forma diferente. O FortiGate usa uma interface associada à Phase 1, enquanto o Palo Alto utiliza tunnel interfaces como tunnel.x. |
 | Políticas de firewall | Além da VPN, é necessário criar políticas permitindo o tráfego entre as redes protegidas. No FortiGate, as políticas são baseadas em interfaces. No Palo Alto, as políticas são baseadas em zonas. |
 | Commit e rollback | Palo Alto exige commit e possui candidate configuration. FortiGate tem comportamento diferente de aplicação. O plano de rollback deve considerar essas diferenças para evitar mudanças parciais ou inconsistentes. |
+|Endereços do túnel | Nas imagens testadas, o Palo Alto utiliza-se normalmente de endereços /30. Já o FortiOS obrigatoriamente solicitou um IP /32. |
 
 
 ## Fluxo de automação
@@ -192,6 +202,8 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Validar rotas, políticas de firewall e interfaces de túnel.
    - Exibir o resultado no terminal.
 
+Exemplos de configuração para [Palo Alto](vpn-config-examples/paloalto.cfg) e [Fortigate](vpn-config-examples/fortigate.cfg)
+
 
 ## Validação de Configuração e Alertas
 
@@ -245,7 +257,6 @@ Exemplos de parâmetros a comparar:
 
 | Parâmetro | Valor esperado |
 |---|---|
-| Nome do túnel | `IPSEC-TU1` |
 | IKE Version | `IKEv2` |
 | Criptografia Phase 1 | `AES-256` |
 | Integridade Phase 1 | `SHA-256` |
@@ -255,8 +266,8 @@ Exemplos de parâmetros a comparar:
 | PFS Group | `Group 14` |
 | Rede local Palo Alto | `10.1.1.0/24` |
 | Rede local FortiGate | `10.2.1.0/24` |
-| Tunnel IP Palo Alto | `169.255.1.1/30` |
-| Tunnel IP FortiGate | `169.255.1.2/30` |
+| Tunnel IP Palo Alto | `169.255.1.1` |
+| Tunnel IP FortiGate | `169.255.1.2` |
 
 Caso o valor encontrado seja diferente do valor esperado, o script deverá gerar um alerta de divergência.
 
@@ -283,10 +294,12 @@ Os alertas deverão ser exibidos diretamente no terminal, já que a automação 
 
 ---
 
-### Exemplo de scripts
+## Pontos de melhoria
 
-Na pasta `/vpn-config-examples` há o resultado dos comandos esperados para serem aplicados nos equipamentos Palo Alto e Fortigate.
+Todo projeto de automação deve considerar a melhoria contínua como parte fundamental do seu ciclo de evolução. Sempre existirão oportunidades de aprimoramento que podem aumentar a confiabilidade, escalabilidade e rastreabilidade do processo. Para este projeto, foram considerados os seguintes pontos de melhoria:
 
-## Considerações finais
+- **Integração com sistemas de IPAM:** Permitir que a reserva e alocação dos endereços IP necessários para a configuração da VPN sejam realizadas automaticamente, reduzindo riscos de conflitos e erros manuais
 
-Escreverei quando testar o laboratorio funcionando e tentar implementar tudo que escrevi
+- **Implementação de rollback automático:** Em caso de falha parcial durante a execução, a automação poderia restaurar a configuração anterior, evitando inconsistências entre os equipamentos e impactos no monitoramento de operação
+
+- **Geração automática de arquivos de configuração:** Criar arquivos contendo as configurações aplicadas em cada equipamento, aumentando a rastreabilidade, facilitando auditorias e auxiliando futuras análises de troubleshooting.
