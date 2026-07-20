@@ -13,7 +13,7 @@ Por fim, mesmo recorrendo a documentações, pesquisas e ferramentas de IA, prio
 
 Após a montagem da infraestrutura virtual, foram realizadas as seguintes etapas para preparação do ambiente:
 
-1. Configuração do Ubuntu 16.04
+1. Configuração do Ubuntu 24.04
 
 O Ubuntu foi utilizado como estação responsável pela execução da automação já que estou emulando na nuvem.
 
