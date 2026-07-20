@@ -27,12 +27,7 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes:
 | **Tipo de VPN** | IPSec Site-to-site | IPSec Site-to-site |
 | **Autenticação** | Pre-shared key | Pre-shared key |
 | **IKE Version** | IKEv2 | IKEv2 |
-
-
-### Endereçamento
-
-| **Endereço** | Palo Alto | Fortigate |
-|---|---:|---:|
+|---|---|---|
 | **IP WAN** | `203.0.113.10` | `198.51.100.20` |
 | **IP de gerenciamento** | `10.32.160.1` | `10.32.160.2` |
 | **Rede local** | `10.1.1.0/24` | `10.2.1.0/24` |
@@ -60,9 +55,9 @@ Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios 
 - Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego. (No HASH do SHA, mesmo que apenas um caractere for mudado, todo o hash é alterado e identificado como não-íntegro facilmente).
 - Autenticação é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados.
 
-1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade e grupo Diffie-Hellman.
+1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade, grupo Diffie-Hellman e timers.
 
-2. Na Phase 2, os peers negociam os parâmetros IPSec usados para proteger o tráfego real entre as redes, incluindo criptografia, integridade, PFS e lifetime
+2. Na Phase 2, os peers negociam os parâmetros IPSec usados para proteger o tráfego real entre as redes, incluindo criptografia, integridade, PFS e timers.
 
 Abaixo há os protocolos escolhidos de exemplo para nosso laboratório: 
 
@@ -93,6 +88,8 @@ Abaixo há os protocolos escolhidos de exemplo para nosso laboratório:
 Os parâmetros AES-256 e SHA-256 foram escolhidos por serem amplamente utilizados, seguros e compatíveis entre FortiGate e Palo Alto. O Diffie-Hellman Group 14 e o PFS Group 14 foram selecionados por oferecerem um bom equilíbrio entre segurança e compatibilidade.
 
 Grupos como 15 podem oferecer mais criptografia, porém podem gerar maior utilização de recursos em ambientes escalados e de hardware mais antigo/limitado. Já grupos como 19 ou 20, são modernos e eficientes, mas podem apresentar limitações de compatibilidade dependendo da versão do FortiOS ou PAN-OS.
+
+Os timers padrão de lifetime são diferentes em ambos os vendors, mas estará configurado para 28800 segundos e 3600 segundos, valores comumente usados no mercado.
 
 
 ## Ferramentas e APIs
