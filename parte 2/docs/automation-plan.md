@@ -83,14 +83,8 @@ Abaixo há os protocolos escolhidos de exemplo para nosso laboratório:
 
 ### PSK
 
-Em ambiente produtivo recomenda-se:
+Em ambiente produtivo não é recomendado usar senhas de autenticação e PSK diretamente no código. São boas práticas usar serviços como: Vault, CyberArk, Hashicorp Vault e etc.
 
-- Vault
-- CyberArk
-- Hashicorp Vault
-- Variáveis de ambiente
-- Contas dedicadas de automação
-- RBAC
 
 ### Compatibilidade
 
