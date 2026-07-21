@@ -7,7 +7,7 @@ Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a
 
 - Configuração de hostname
 - Configuração de VLANs
-- Realizar 'write memory'
+- Executar `write memory`
 - Backup local da configuração
 - Validação da configuração aplicada
 - Versionamento 
@@ -18,12 +18,12 @@ Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a
 - Interface gráfica simples com Tkinter  - Motivo: Já vem instalado com python, executa localmente e menos complexo de aprender
 - Teste de conexão SSH com o equipamento
 - Configuração de hostname
-- VLAN ID e VLAN Name inserido pelo usuário
+- VLAN ID e VLAN Name inseridos pelo usuário
 - write memory
 - Backup local da configuração atual
 - Validação automática após a automação
 - Validação manual sem push de configuração
-- Exibição de logs e alertas com clear logs
+- Exibição de logs e alertas, com opção para limpar os logs
 
 
 ## Tecnologias utilizadas
@@ -50,6 +50,7 @@ Este projeto foi desenvolvido como parte de uma avaliação técnica destinada a
 4. Acesso SSH ao equipamento
 5. Usuário com permissão de conf t
 
+
 ## GIT
 
 Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar o projeto. Em seguida, acesse o repositório no GitHub, copie a URL de clonagem e execute o comando git clone para baixar uma cópia do repositório para o seu ambiente local, conforme ilustrado abaixo.
@@ -65,15 +66,28 @@ Com o Git instalado em sua máquina, escolha o diretório onde deseja armazenar 
 | `git status` | Verifica alterações locais |
 | `git add .` | Adiciona arquivos ao staging |
 | `git commit -m "A pretty little message"` |  Cria um commit comentado |
-| `git push`  | envia as alterações para a main |
+| `git push`  | envia commits para o repositório remoto |
 | `git pull` | Atualiza o repositório local |
 
 
 ## Como usar
 
+### Resumo dos arquivos
+
+- `app/main.py`: inicia a aplicação.
+- `app/frontend/gui.py`: contém a interface Tkinter.
+- `app/network/connection.py`: gerencia conexão SSH com o switch.
+- `app/network/config_builder.py`: gera comandos Cisco.
+- `app/network/backup.py`: realiza backup da configuração.
+- `app/network/validate.py`: valida hostname e VLANs.
+
+---
+
 ### Executar automação
 
-Iniciar o arquivo **app/main.py** - Responsável por iniciar a interface gráfica Tkinter.
+Iniciar o arquivo main.py - Responsável por iniciar a interface gráfica Tkinter.
+
+`python3 app/main.py or py app/main.py`
 
 <img src="images/start.png" width="95%">
 
@@ -99,6 +113,9 @@ VLAN 10: VLAN_DADOS
 VLAN 20: VLAN_VOZ
 VLAN 50: VLAN_SEGURANCA
 ```
+> Observação: O nome `VLAN_SEGURANCA` foi utilizado sem acento para evitar possíveis problemas de compatibilidade com encoding e CLI Cisco. Essa VLAN corresponde ao requisito `VLAN_SEGURANÇA` do desafio.
+
+---
 
 ### Botões
 
@@ -106,6 +123,8 @@ VLAN 50: VLAN_SEGURANCA
 Valida os campos obrigatórios e realiza um teste de conexão SSH com o switch. O teste utiliza Netmiko para conectar ao equipamento e executar um comando simples de verificação.
 
 <img src="images/testeconexao.png" width="95%">
+
+---
 
 #### **Executar Automação**
 
@@ -118,6 +137,9 @@ Executa o fluxo completo de automação:
 5. Salva a configuração na NVRAM
 6. Realiza backup local da running-config
 7. Valida a configuração final
+
+    7.1 A validação compara o estado desejado informado na interface com o estado atual coletado do switch. São verificados o hostname, a existência das VLANs e os nomes configurados para cada VLAN.
+
 8. Exibe o resultado na interface
 
 Antes
@@ -127,6 +149,7 @@ Execução do job
 Após
 <img src="images/posautomation.png" width="95%">
 
+---
 
 #### **Validar Config**
 Executa apenas a validação da configuração atual do switch. Este botão é útil para testar divergências sem reaplicar a configuração.
@@ -142,8 +165,12 @@ Ao executar a automação para executar as mudanças e verificar novamente, é e
 
 <img src="images/validation ok.png" width="95%">
 
+---
+
 #### Limpar Logs
 Limpa a área de logs da interface gráfica.
+
+---
 
 ### Backup 
 
@@ -156,9 +183,15 @@ HOSTNAME_YYYYMMDD-HHMMSS.cfg
 Exemplo:
 <img src="images/printbackup.png" width="95%">
 
+---
 
-**Os arquivos de backup não são enviados para o Git, pois podem conter informações sensíveis da configuração do equipamento.**
+## Segurança
 
+As credenciais de acesso ao switch são informadas na interface gráfica durante a execução e não devem ser armazenadas no código ou enviadas ao Git.
+
+Arquivos de backup podem conter informações sensíveis da configuração do equipamento. Por isso, os arquivos `.cfg` gerados são ignorados pelo `.gitignore`.
+
+--- 
 
 ### Versionamento
 O projeto foi versionado com Git. Durante o desenvolvimento, foram realizados commits descritivos para registrar a evolução do projeto.
@@ -169,4 +202,4 @@ A pasta backup/ é mantida no repositório por meio de um arquivo .gitkeep, mas 
 
 ## Considerações finais
 
-Esse projeto foi uma oportunidade incrível para ir além da engenharia de redes tradicional. No desenvolvimento, me desenvolvi em automação, programação em Python, criação de interfaces, controle de versão com Git e documentação técnica. Foi uma experiência super enriquecedora e que só me provou o quanto a automação já virou competência essencial no dia a dia da nossa área.
+Esse projeto foi uma oportunidade incrível para ir além da engenharia de redes tradicional. No desenvolvimento, evoluí bastante em automação, programação em Python, criação de interfaces, controle de versão com Git e documentação técnica. Foi uma experiência super enriquecedora e que só me provou o quanto a automação já virou competência essencial no dia a dia da nossa área.
