@@ -202,7 +202,7 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Validar rotas, políticas de firewall e interfaces de túnel.
    - Exibir o resultado no terminal.
 
-Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [FortiGate](/parte%202/vpn-config-examples/FortiGate.cfg)
+Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [FortiGate](/parte%202/vpn-config-examples/fortigate.cfg)
 
 ---
 
