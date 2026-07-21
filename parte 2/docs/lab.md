@@ -85,7 +85,7 @@ end
 
 Após a conclusão dessas configurações, foi realizada a validação do acesso SSH tanto ao FortiGate quanto ao Palo Alto, confirmando que ambos estavam aptos para serem utilizados pela automação desenvolvida.
 
-![ubuntu](lab2.png)
+
 
 ## Observação sobre o estado do lab
 Apesar da aplicação ter sido desenvolvida e o fluxo de automação estar funcional, o laboratório não foi concluído 100% devido a limitações encontradas nas imagens disponíveis para teste.
@@ -105,8 +105,15 @@ A aplicação foi construída em modo CLI, sem interface gráfica, para manter o
 2. Validar VPN
 0. Sair
 ```
+![ubuntu](lab3.png)
+
 
 A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/vpn.json), valida as informações obrigatórias, identifica o vendor de cada dispositivo, traduz os parâmetros para a sintaxe esperada por cada plataforma e gera os comandos necessários para FortiGate e Palo Alto. Em seguida, a aplicação pode conectar nos equipamentos via SSH utilizando Netmiko e aplicar a configuração.
+
+![ubuntu](lab4.png)
+![ubuntu](lab5.png)
+![ubuntu](lab7.png)
+![ubuntu](lab8.png)
 
 ## Fluxo principal
 
@@ -124,6 +131,8 @@ A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/
 12. Executar commit no Palo Alto, quando aplicável.
 13. Permitir execução de comandos de validação pelo menu.
 
+---
+
 ## Estrutura dos módulos
 
 ## Estrutura dos módulos do lab opcional
@@ -137,3 +146,5 @@ A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/
 | `conn.py` | Gerencia conexões SSH via Netmiko, aplica comandos, executa commit no Palo Alto, roda validações e trata erros de conexão. |
 | `vendors/paloalto.py` | Gera comandos de configuração e validação específicos para Palo Alto/PAN-OS. |
 | `vendors/fortigate.py` | Gera comandos de configuração e validação específicos para FortiGate/FortiOS. |
+
+
