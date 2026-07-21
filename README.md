@@ -203,3 +203,15 @@ A pasta backup/ é mantida no repositório por meio de um arquivo .gitkeep, mas 
 ## Considerações finais
 
 Esse projeto foi uma oportunidade incrível para ir além da engenharia de redes tradicional. No desenvolvimento, evoluí bastante em automação, programação em Python, criação de interfaces, controle de versão com Git e documentação técnica. Foi uma experiência super enriquecedora e que só me provou o quanto a automação já virou competência essencial no dia a dia da nossa área.
+
+# Parte 2
+
+A segunda etapa deste desafio estabelece como requisito obrigatório a **elaboração de um planejamento detalhado** e implementação de um laboratório prático como atividade opcional.
+
+Com o objetivo de organizar o conteúdo de forma clara, estruturada e facilitar a compreensão de cada etapa do processo, esta seção foi dividida em tópicos específicos.
+
+### Links:
+- A parte mandatória do desafio está [aqui](docs/automation-plan.md)
+- Considerações sobre o projeto e lab da parte opcional [aqui](docs/lab.md)
+
+Muitíssimo obrigado!
