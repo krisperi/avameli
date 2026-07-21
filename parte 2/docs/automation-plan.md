@@ -2,7 +2,7 @@
 
 ## Resumo
 
-Seguindo para a parte 2 do desafio - esse documento descreve um plano para automatizar a configuração de uma VPN IPSec site-to-site entre os firewalls FortiGate e Palo Alto.
+Esse documento corresponde à Parte 2 do desafio e descreve um plano para automatizar a configuração de uma VPN IPSec site-to-site entre os firewalls FortiGate e Palo Alto.
 
 O objetivo é definir os parâmetros necessários, ferramentas, passos lógicos da automação, considerações específicas de ambiente multi-vendor e estratégias de validação e alertas.
 
@@ -20,21 +20,19 @@ O cenário proposto contempla uma VPN IPSec site-to-site entre dois ambientes (P
 | **Item** | **Site A** | **Site B** |
 |---|---|---|
 | **Fabricante** | Palo Alto | Fortinet |
-| **Função** | Firewall | Firewall |
 | **Tipo de VPN** | IPSec Site-to-site | IPSec Site-to-site |
 | **Autenticação** | Pre-shared key | Pre-shared key |
 | **IKE Version** | IKEv2 | IKEv2 |
-|**IP Tunel**|`169.255.1.1/30`|`169.255.1.2/30`|
-| **IP WAN** | `203.0.113.10/30` | `198.51.100.20` |
+| **Rede do túnel** | `169.255.1.0/30` | `169.255.1.0/30` |
+| **IP do Túnel**|`169.255.1.1`|`169.255.1.2`|
+| **IP WAN** | `203.0.113.10/30` | `198.51.100.20/30` |
 | **IP de gerenciamento** | `10.32.160.1` | `10.32.160.2` |
 | **Rede local** | `10.1.1.0/24` | `10.2.1.0/24` |
-| **Interface WAN** | `TBD` | `TBD` |
-| **Interface LAN/Trust** | `TBD` | `TBD` |
-| **Identificação dos tuneis** | `IPSEC-TU1` | `IPSEC-TU1` |
+| **Interface WAN** | `eth1/1` | `port1` |
+| **Interface LAN/Trust** | `eth1/2` | `port2` |
+| **Identificação dos túneis** | `IPSEC-TU1` | `IPSEC-TU1` |
 
 Por se tratar de um ambiente de laboratório virtual não-produtivo, os IPs de WAN escolhidos são correspondentes a faixa TEST-NET da IANA usada para fins de documentação.
-
-Os ranges de gerência e rede local são fictícios para teste do laboratório
 
 Nome de identificação dos túneis IPSec foi o mesmo utilizado em ambos os firewalls para facilitar identificação operacional em troubleshooting.
 
@@ -42,15 +40,13 @@ Nome de identificação dos túneis IPSec foi o mesmo utilizado em ambos os fire
 
 ### VPN e definição de parâmetros
 
-Uma VPN é necessária quando precisamos de uma comunicação segura entre ambientes que estão interligados por uma infraestrutura não confiável, como por exemplo, a internet. Evitando expor diretamente os serviços internos, a VPN cria um caminho protegido entre os ambientes, permitindo que tráfego sensível seja transportado com segurança.
+Foi selecionada uma VPN route-based por ser uma abordagem moderna, suportada tanto pelo FortiGate quanto pelo Palo Alto, além de facilitar a automação, o roteamento e a validação operacional.
 
-Foi selecionado uma VPN route-based, porque é uma abordagem moderna, é suportada tanto pelo Fortigate quanto pelo Palo Alto e facilita muito a automação.
-
-Para que seja estabelecida uma VPN IPSec, faz necessário o uso dos princípios **C.I.A** de segunça: **Confidencialidade, Integridade e Autenticação**, divido em 2 fases.
+Para que seja estabelecida uma VPN IPSec, é necessário o uso dos princípios de segurança: **Confidencialidade, Integridade e Autenticidade**, dividido em duas fases.
 
 - Confidencialidade é garantida pela criptografia, como AES, protegendo os dados contra leitura indevida.
 - Integridade é garantida por algoritmos como SHA, que ajudam a detectar alterações no tráfego. (O HASH identifica alterações no pacote em caso de mudança de um caractere sequer).
-- Autenticação é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados.
+- Autenticidade é estabelecida durante a negociação entre os peers, normalmente com pre-shared key ou certificados. O peer precisa provar de alguma forma que é quem diz ser.
 
 1. Na Phase 1, os dispositivos estabelecem um canal seguro de controle usando IKE, negociando autenticação, criptografia, integridade, grupo Diffie-Hellman e timers.
 
@@ -107,7 +103,7 @@ A automação de configuração de VPN IPSec entre FortiGate e Palo Alto pode se
 | Palo Alto | Palo Alto REST API | Criar objetos, interfaces, VPN, rotas e policies |
 | Palo Alto | Palo Alto XML API | Configuração, comandos operacionais e commit via API call |
 | Palo Alto | SSH/CLI Python com Netmiko | Enviar comandos `set`, executar commit e coletar validações |
-| Palo Alto | Panorama | Gerenciamento centralizado e GUI |
+| Palo Alto | Panorama | Gerenciamento centralizado, templates, políticas, auditoria e padronização |
 
 
 ### Fortinet
@@ -116,7 +112,7 @@ A automação de configuração de VPN IPSec entre FortiGate e Palo Alto pode se
 |---|---|---|
 | FortiGate | FortiGate REST API | Criar objetos, VPN IPSec, rotas, policies e consultar status via API calls |
 | FortiGate | SSH/CLI Python com Netmiko | Enviar comandos CLI e coletar validações |
-| FortiGate | FortiManager | Gerenciamento centralizado e GUI |
+| FortiGate | FortiManager | Gerenciamento centralizado, templates, políticas, auditoria e padronização |
 
 
 Para esse exemplo, a abordagem escolhida será Python com entrada estruturada e Netmiko via SSH. Essa opção é simples para laboratório e permite demonstrar a lógica multi-vendor, chamando módulos diferentes conforme o fabricante identificado.
@@ -136,7 +132,7 @@ Automatizar a configuração de uma VPN IPSec entre dispositivos de fabricantes 
 | Interface túnel | Em VPN route-based, cada vendor trata a interface de túnel de forma diferente. O FortiGate usa uma interface associada à Phase 1, enquanto o Palo Alto utiliza tunnel interfaces como tunnel.x. |
 | Políticas de firewall | Além da VPN, é necessário criar políticas permitindo o tráfego entre as redes protegidas. No FortiGate, as políticas são baseadas em interfaces. No Palo Alto, as políticas são baseadas em zonas. |
 | Commit e rollback | Palo Alto exige commit e possui candidate configuration. FortiGate tem comportamento diferente de aplicação. O plano de rollback deve considerar essas diferenças para evitar mudanças parciais ou inconsistentes. |
-|Endereços do túnel | Nas imagens testadas, o Palo Alto utiliza-se normalmente de endereços /30. Já o FortiOS obrigatoriamente solicitou um IP /32. |
+|Endereços do túnel | Durante testes de laboratório, o FortiOS pode representar ou aplicar o endereço de túnel de forma diferente do Palo Alto, dependendo da versão e do tipo de VPN. Por isso, a automação deve considerar diferenças de sintaxe e validação entre os vendors. |
 
 
 ## Fluxo de automação
@@ -182,6 +178,7 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Criar ou associar a interface de túnel `IPSEC-TU1`.
    - Configurar rota estática para a rede remota via túnel.
    - Criar políticas de firewall permitindo tráfego entre LAN e VPN.
+   - Garantir que NAT esteja desabilitado para o tráfego protegido.
 
 6. **Gerar configuração para o Palo Alto**
    - Criar address objects para rede local e rede remota.
@@ -192,10 +189,11 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Criar IPSec Tunnel associado ao IKE Gateway e ao IPSec Crypto Profile.
    - Configurar rota estática para a rede remota via tunnel interface.
    - Criar security policies permitindo o tráfego entre as zonas envolvidas.
+   - Garantir que NAT esteja desabilitado para o tráfego protegido.
    - Executar commit para aplicar a configuração.
 
 7. **Aplicar configuração nos firewalls**
-   - O script deverá identificar o vendor de cada equipamento e chamar o módulo correto (fortigate.py ou palo-alto.py).
+   - O script deverá identificar o vendor de cada equipamento e chamar o módulo correto (FortiGate.py ou paloalto.py).
 
 8. **Executar validação após automação**
    - Verificar se a Phase 1 foi estabelecida de acordo com os comandos disponíveis de cada vendor
@@ -204,7 +202,7 @@ Após essa separação, há um módulo ***parameters.py*** que fará a padroniza
    - Validar rotas, políticas de firewall e interfaces de túnel.
    - Exibir o resultado no terminal.
 
-Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [Fortigate](/parte%202/vpn-config-examples/fortigate.cfg)
+Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/paloalto.cfg) e [FortiGate](/parte%202/vpn-config-examples/FortiGate.cfg)
 
 ---
 
@@ -212,7 +210,7 @@ Exemplos de configuração CLI para [Palo Alto](/parte%202/vpn-config-examples/p
 
 Após a aplicação da configuração da VPN IPSec, o script deverá executar validações nos dois firewalls para confirmar se a configuração foi aplicada corretamente e se o túnel está operacional.
 
-A estratégia de validação será dividida em duas camadas: Confirmar se os objetos, propostas, túneis, rotas e políticas foram criados conforme esperado. Segunda camadá irá validar se a VPN está estabelecida e se existe conectividade entre as extremidades do túnel.
+A estratégia de validação será dividida em duas camadas: Confirmar se os objetos, propostas, túneis, rotas e políticas foram criados conforme esperado. Segunda camada irá validar se a VPN está estabelecida e se existe conectividade entre as extremidades do túnel.
 
 Caso alguma validação falhe, o script deverá exibir alertas claros no terminal, indicando o dispositivo, o item validado, o valor esperado e a divergência encontrada.
 
@@ -248,7 +246,7 @@ No Palo Alto, a automação deverá validar se os objetos, profiles, túnel, rot
 | Tunnel interface | `show interface tunnel.1` | Interface de túnel ativa com IP correto |
 | Rota estática | `show routing route` | Rota para a rede remota apontando para a tunnel interface |
 | Security policies | `show config running` | Policies permitindo tráfego entre zonas envolvidas |
-| Conectividade tunnel IP | `ping source host 169.255.1.2` | Resposta do IP de túnel do Fortigate |
+| Conectividade tunnel IP | `ping source 169.255.1.1 host 169.255.1.2` | Resposta do IP de túnel do FortiGate |
 
 ---
 
