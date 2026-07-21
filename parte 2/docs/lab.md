@@ -98,6 +98,24 @@ Após a entrega, continuarei estudando e buscando imagens de FortiGate e Palo Al
 
 ## Resumo
 
+
+## Como executar o lab opcional no Ubuntu 24.04
+
+Durante os testes no Ubuntu 24.04, foi necessário criar um ambiente virtual Python para instalar e utilizar o Netmiko corretamente.
+
+### 1. Criar o ambiente virtual
+
+Na pasta do projeto, execute:
+
+```bash
+python3 -m venv netmiko
+. netmiko/bin/activate
+pip install netmiko
+```
+
+Após, acessar o diretorio parte\ 2/app e executar o arquivo ```main.py```
+
+
 A aplicação foi construída em modo CLI, sem interface gráfica, para manter o fluxo simples, direto e adequado a um ambiente de laboratório. O programa apresenta um menu com opções para configurar a VPN ou executar comandos de validação.
 
 ```text
@@ -147,4 +165,11 @@ A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/
 | `vendors/paloalto.py` | Gera comandos de configuração e validação específicos para Palo Alto/PAN-OS. |
 | `vendors/fortigate.py` | Gera comandos de configuração e validação específicos para FortiGate/FortiOS. |
 
+## Pontos de melhoria contínua
 
+- **Frontend:** facilitar o uso por usuários sem familiaridade com JSON ou linha de comando.
+- **Rollback automático:** restaurar a configuração anterior em caso de falha parcial durante a aplicação.
+- **Integração com secret manager:** armazenar senhas e PSKs com segurança.
+- **Validação avançada:** verificar compatibilidade de algoritmos, subnets, interfaces e vendors antes da execução.
+- **Relatórios de execução:** gerar saída com comandos aplicados, validações e resultado final.
+- **Suporte a múltiplos túneis:** permitir criação em lote de VPNs.
