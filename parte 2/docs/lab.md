@@ -1,7 +1,7 @@
 # LAB Opcional
 ## Considerações pessoais
 
-Para a execução deste laboratório, foi necessário uma aquisição de um plano EVE-NG Cloud, já que rodar as máquinas virtuais do FortiGate, Palo Alto e Ubuntu simultaneamente ultrapassava os limites de hardware da minha máquina. Apesar disso, consegui emular o ambiente o cenário proposto, aproximando a topologia ao máximo de um cenário real.
+Para a execução deste laboratório, foi necessária a aquisição de um plano EVE-NG Cloud, já que rodar as máquinas virtuais do FortiGate, Palo Alto e Ubuntu simultaneamente ultrapassava os limites de hardware da minha máquina. Apesar disso, consegui emular o ambiente o cenário proposto parcialmente, aproximando a topologia de um cenário real.
 
 O código dessa automação se encontra em [app](/app/)
 
@@ -24,7 +24,7 @@ As atividades realizadas foram:
 - Configuração da interface de ens4 com o endereço 10.32.160.10/24;
 - Instalação do Git;
 - Instalação do Python 3;
-- Clonagem do repositório utilizando git pull, permitindo acesso aos códigos do projeto.
+- Clonagem do repositório utilizando git clone, permitindo acesso aos códigos do projeto.
 
 ```bash
 sudo ip addr add 10.32.160.10/24 dev ens4
@@ -108,6 +108,7 @@ Durante os testes no Ubuntu 24.04, foi necessário criar um ambiente virtual Pyt
 Na pasta do projeto, execute:
 
 ```bash
+sudo apt update
 python3 -m venv netmiko
 . netmiko/bin/activate
 pip install netmiko
@@ -152,8 +153,6 @@ A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](/par
 ---
 
 ## Estrutura dos módulos
-
-## Estrutura dos módulos do lab opcional
 
 | Módulo | Função principal |
 |---|---|
