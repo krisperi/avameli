@@ -304,3 +304,5 @@ Todo projeto de automação deve considerar a melhoria contínua como parte fund
 - **Implementação de rollback automático:** Em caso de falha parcial durante a execução, a automação poderia restaurar a configuração anterior, evitando inconsistências entre os equipamentos e impactos no monitoramento de operação
 
 - **Geração automática de arquivos de configuração:** Criar arquivos contendo as configurações aplicadas em cada equipamento, aumentando a rastreabilidade, facilitando auditorias e auxiliando futuras análises de troubleshooting.
+
+- **Expansão da capacidade de vendors:** Aumentar a quantidade de vendors suportado no código.
