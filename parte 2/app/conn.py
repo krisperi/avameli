@@ -3,17 +3,17 @@ from netmiko.exceptions import NetmikoAuthenticationException, NetmikoTimeoutExc
 
 
 def mask_sensitive_commands(commands):
-    masked = []
+    masked_commands = []
 
     for command in commands:
         if "pre-shared-key key" in command:
-            masked.append(command.split("pre-shared-key key")[0] + "pre-shared-key key ********")
+            masked_commands.append(command.split("pre-shared-key key")[0] + "pre-shared-key key ********")
         elif "set psksecret" in command:
-            masked.append("set psksecret ********")
+            masked_commands.append("set psksecret \"********\"")
         else:
-            masked.append(command)
+            masked_commands.append(command)
 
-    return masked
+    return masked_commands
 
 
 def connect_device(device, username, password):
@@ -27,36 +27,37 @@ def connect_device(device, username, password):
 
 def apply_commands(device, commands, username, password):
     try:
-        print(f"\n[INFO] Conectando em {device['name']} - {device['management_ip']}")
+        print(f"\n[INFO] Conectando em {device['name']} ({device['management_ip']})...")
 
         connection = connect_device(device, username, password)
 
         print("[OK] Conectado com sucesso.")
         print("[INFO] Aplicando configuração...")
 
-        if device["vendor"] == "fortigate":
-            output = ""
-            for command in commands:
-                output += connection.send_command_timing(command) + "\n"
+        output = ""
 
-        else:
-            output = connection.send_config_set(commands)
+        if device["vendor"] == "palo_alto":
+            output += connection.send_config_set(commands)
             print("[INFO] Executando commit no Palo Alto...")
             output += "\n" + connection.send_command_timing("commit", read_timeout=180)
 
-        print(output)
+        elif device["vendor"] == "fortigate":
+            for command in commands:
+                output += connection.send_command_timing(command, read_timeout=60) + "\n"
 
         connection.disconnect()
 
-        print(f"[OK] Configuração finalizada em {device['name']}")
+        print(output)
+        print(f"[OK] Configuração finalizada em {device['name']}.")
+
         return True
 
     except NetmikoAuthenticationException:
-        print(f"[ERROR] Falha de autenticação em {device['name']}")
+        print(f"[ERROR] Falha de autenticação em {device['name']}.")
         return False
 
     except NetmikoTimeoutException:
-        print(f"[ERROR] Timeout ao conectar em {device['name']}")
+        print(f"[ERROR] Timeout ao conectar em {device['name']}.")
         return False
 
     except Exception as error:

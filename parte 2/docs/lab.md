@@ -87,3 +87,53 @@ Após a conclusão dessas configurações, foi realizada a validação do acesso
 
 ![ubuntu](lab2.png)
 
+## Observação sobre o estado do lab
+Apesar da aplicação ter sido desenvolvida e o fluxo de automação estar funcional, o laboratório não foi concluído 100% devido a limitações encontradas nas imagens disponíveis para teste.
+
+As imagens utilizadas apresentaram diferenças relevantes de versão e suporte de recursos. Em especial, a imagem FortiOS disponível aceitava apenas parâmetros criptográficos muito antigos para Phase 1 (DES), enquanto esses mesmos parâmetros não estavam mais disponíveis ou recomendados no Palo Alto utilizado no lab. Essa divergência impediu a validação completa do túnel IPSec fim a fim dentro do prazo disponível.
+
+Como o prazo de entrega do desafio chegou, optei por manter o lab como uma prova de conceito funcional da arquitetura de automação, documentando as limitações encontradas. A aplicação demonstra a lógica proposta: leitura de parâmetros, validação de vendor, mapeamento por plataforma, geração de comandos e aplicação via SSH.
+
+Após a entrega, continuarei estudando e buscando imagens de FortiGate e Palo Alto com versões mais compatíveis para concluir a validação ponta a ponta e fazer o túnel IPSec operar 100% em laboratório pois virou pessoal.
+
+## Resumo
+
+A aplicação foi construída em modo CLI, sem interface gráfica, para manter o fluxo simples, direto e adequado a um ambiente de laboratório. O programa apresenta um menu com opções para configurar a VPN ou executar comandos de validação.
+
+```text
+1. Configurar VPN
+2. Validar VPN
+0. Sair
+```
+
+A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/vpn.json), valida as informações obrigatórias, identifica o vendor de cada dispositivo, traduz os parâmetros para a sintaxe esperada por cada plataforma e gera os comandos necessários para FortiGate e Palo Alto. Em seguida, a aplicação pode conectar nos equipamentos via SSH utilizando Netmiko e aplicar a configuração.
+
+## Fluxo principal
+
+1. Exibir menu CLI.
+2. Ler o arquivo JSON com os parâmetros da VPN.
+3. Validar campos obrigatórios.
+4. Validar se o vendor informado é suportado.
+5. Mapear os parâmetros genéricos para a sintaxe correta de cada vendor.
+6. Gerar comandos específicos para FortiGate ou Palo Alto.
+7. Exibir os comandos no terminal, mascarando informações sensíveis como PSK.
+8. Solicitar confirmação antes de aplicar a configuração.
+9. Solicitar usuário e senha SSH em tempo de execução.
+10. Conectar ao equipamento via Netmiko.
+11. Aplicar a configuração.
+12. Executar commit no Palo Alto, quando aplicável.
+13. Permitir execução de comandos de validação pelo menu.
+
+## Estrutura dos módulos
+
+## Estrutura dos módulos do lab opcional
+
+| Módulo | Função principal |
+|---|---|
+| `main.py` | Ponto de entrada da aplicação. Exibe o menu CLI, controla o fluxo de configuração/validação, solicita credenciais SSH e chama os demais módulos. |
+| `loader.py` | Lê o arquivo JSON com os parâmetros da VPN e retorna os dados para a aplicação. |
+| `vendors.py` | Mantém a lista de vendors suportados e valida se o vendor informado no JSON é aceito. |
+| `parametros.py` | Mapeia parâmetros genéricos do JSON para a sintaxe específica de cada vendor, como FortiOS ou PAN-OS. |
+| `conn.py` | Gerencia conexões SSH via Netmiko, aplica comandos, executa commit no Palo Alto, roda validações e trata erros de conexão. |
+| `vendors/paloalto.py` | Gera comandos de configuração e validação específicos para Palo Alto/PAN-OS. |
+| `vendors/fortigate.py` | Gera comandos de configuração e validação específicos para FortiGate/FortiOS. |
