@@ -126,7 +126,7 @@ A aplicação foi construída em modo CLI, sem interface gráfica, para manter o
 ![ubuntu](lab3.png)
 
 
-A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](app/vpn.json), valida as informações obrigatórias, identifica o vendor de cada dispositivo, traduz os parâmetros para a sintaxe esperada por cada plataforma e gera os comandos necessários para FortiGate e Palo Alto. Em seguida, a aplicação pode conectar nos equipamentos via SSH utilizando Netmiko e aplicar a configuração.
+A automação lê um arquivo JSON contendo os parâmetros da VPN [vpn.json](/parte%202/app/vpn.json), valida as informações obrigatórias, identifica o vendor de cada dispositivo, traduz os parâmetros para a sintaxe esperada por cada plataforma e gera os comandos necessários para FortiGate e Palo Alto. Em seguida, a aplicação pode conectar nos equipamentos via SSH utilizando Netmiko e aplicar a configuração.
 
 ![ubuntu](lab4.png)
 ![ubuntu](lab5.png)
